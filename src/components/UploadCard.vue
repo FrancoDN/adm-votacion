@@ -23,12 +23,12 @@
             ></v-text-field>
           </v-col>
           <v-col>
-            <v-btn ref="subirButton" color="success" block @click="subirTelegrama()" v-if="uploadType">Cargar</v-btn>
-            <v-btn ref="subirButton" color="success" block @click="subirQuiniela()" v-else>Cargar</v-btn>
+            <v-btn large ref="subirButton" color="success" block @click="subirTelegrama()" v-if="uploadType">Cargar</v-btn>
+            <v-btn large ref="subirButton" color="success" block @click="subirQuiniela()" v-else>Cargar</v-btn>
           </v-col>
           <v-col class="d-flex justify-center justify-space-around pa-0 mt-4">
-            <v-btn color="#E1B530" @click="changeType(false)">Quiniela</v-btn>
-            <v-btn color="primary" @click="changeType(true)">Telegrama</v-btn>
+            <v-btn color="#E1B530" @click="changeType(false)" large>Quiniela</v-btn>
+            <v-btn color="primary" @click="changeType(true)" large>Telegrama</v-btn>
           </v-col>
         </v-row>
       </v-card-text>

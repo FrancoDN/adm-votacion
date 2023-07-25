@@ -69,7 +69,7 @@ export default {
             if (userInfo && userInfo.isAdmin) {
               this.$router.push("/admin");
             } else {
-              this.$router.push("/normal-user");
+              this.$router.push("/user");
             }
           })
           .catch((error) => {
