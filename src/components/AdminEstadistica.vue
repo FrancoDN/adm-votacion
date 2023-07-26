@@ -1,11 +1,8 @@
 <template>
    <div class="estadistica">
-      <p style="font-weight: 700; font-size: 3.25rem;"><u>Estadísticas en tiempo real</u></p>
       <div class="d-flex justify-center">
-        <vue-chart></vue-chart>
+        <vue-chart :tipo-voto="tipoVoto"></vue-chart>
       </div>
-      <p style="font-weight: 700; font-size: 3.25rem; text-align: center;"><u>Quiniela</u></p>
-      <div class="quiniela"></div>
     </div>
 </template>
 
@@ -17,6 +14,12 @@ export default {
   },
   data() {
     return {};
+  },
+  props: {
+    tipoVoto: {
+      type: String,
+      required: true,
+    },
   },
 };
 </script>

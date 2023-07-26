@@ -14,7 +14,6 @@
             <v-text-field
               ref="textField"
               :label="inputText"
-              @input="onInput"
               @keyup.enter="handleEnterKeyPress"
               v-model="inputValue"
               solo

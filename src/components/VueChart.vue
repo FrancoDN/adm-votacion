@@ -1,17 +1,13 @@
 <template>
   <Doughnut
-    :chart-options="chartOptions"
-    :chart-data="chartData"
-    :chart-id="chartId"
-    :dataset-id-key="datasetIdKey"
-    :plugins="plugins"
-    :css-classes="cssClasses"
-    :height="height"
-    style="width: 31.25rem; height: 31.25rem"
+    :options="chartOptions"
+    :data="chartData"
+    :key="chartKey" 
+    style="width: 37.5rem; height: 37.5rem"
   />
 </template>
-  
-  <script>
+
+<script>
 import { Doughnut } from "vue-chartjs";
 
 import {
@@ -31,17 +27,9 @@ export default {
     Doughnut,
   },
   props: {
-    chartId: {
+    tipoVoto: {
       type: String,
-      default: "doughnut-chart",
-    },
-    datasetIdKey: {
-      type: String,
-      default: "label",
-    },
-    cssClasses: {
-      default: "",
-      type: String,
+      required: true,
     },
   },
   data() {
@@ -52,21 +40,41 @@ export default {
           {
             label: "Votos",
             backgroundColor: ["#0C74AE", "#00B8FF", "#FFDA00", "#E00712"],
-            data: [40, 20, 80, 10],
+            data: [],
           },
         ],
       },
       chartOptions: {
         responsive: true,
         plugins: {
-          legend: {
-            position: "bottom",
-          },
+          legend: false,
         },
         maintainAspectRatio: false,
       },
+      chartKey: 0, // Inicializamos la variable adicional chartKey
     };
+  },
+
+  mounted() {
+    this.actualizarDatosGrafico("intendencia");
+  },
+  watch: {
+    tipoVoto(newTipoVoto) {
+      this.actualizarDatosGrafico(newTipoVoto);
+    },
+  },
+  methods: {
+    actualizarDatosGrafico(tipoVoto) {
+      console.log("hola");
+      const datosPorTipoDeVoto = {
+        presidencia: [30, 40, 20, 10],
+        gobernacion: [10, 20, 60, 10],
+        intendencia: [70, 30, 10, 2],
+      };
+      console.log(tipoVoto);
+      this.chartData.datasets[0].data = datosPorTipoDeVoto[tipoVoto];
+      this.chartKey = tipoVoto;
+    },
   },
 };
 </script>
-  
