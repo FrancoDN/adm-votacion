@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import LoginView from '../views/LoginView.vue'
 import AdminView from '../views/AdminView.vue'
 import UserView from '../views/UserView.vue'
+import QuinielaView from '../views/QuinielaView.vue'
 
 Vue.use(VueRouter)
 
@@ -21,6 +22,11 @@ const routes = [
     path: '/user',
     name: 'user',
     component: UserView
+  },
+  {
+    path: '/quiniela',
+    name: 'quiniela',
+    component: QuinielaView
   },
   // {
   //   path: '/about',

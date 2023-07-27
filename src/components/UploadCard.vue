@@ -22,23 +22,61 @@
             ></v-text-field>
           </v-col>
           <v-col>
-            <v-btn large ref="subirButton" color="success" block @click="subirTelegrama()" v-if="uploadType">Cargar</v-btn>
-            <v-btn large ref="subirButton" color="success" block @click="subirQuiniela()" v-else>Cargar</v-btn>
+            <v-btn
+              large
+              ref="subirButton"
+              color="success"
+              block
+              @click="subirTelegrama()"
+              v-if="uploadType"
+              >Cargar</v-btn
+            >
+            <v-btn
+              large
+              ref="subirButton"
+              color="success"
+              block
+              @click="subirQuiniela()"
+              v-else
+              >Cargar</v-btn
+            >
           </v-col>
           <v-col class="d-flex justify-center justify-space-around pa-0 mt-4">
-            <v-btn color="#E1B530" @click="changeType(false)" large>Quiniela</v-btn>
-            <v-btn color="primary" @click="changeType(true)" large>Telegrama</v-btn>
+            <v-btn color="#E1B530" @click="changeType(false)" large
+              >Quiniela</v-btn
+            >
+            <v-btn color="primary" @click="changeType(true)" large
+              >Telegrama</v-btn
+            >
           </v-col>
         </v-row>
       </v-card-text>
     </v-card>
+    <transition name="fade">
+      <v-alert
+        v-if="showAlert"
+        border="left"
+        prominent
+        :type="alertType"
+        class="mt-6"
+      >
+        <template v-slot:default>
+          <span v-html="alertMessage"></span>
+        </template>
+      </v-alert>
+    </transition>
   </div>
 </template>
-  
-  <script>
+
+<script>
+import firebase from "firebase/app";
+import "firebase/database";
 export default {
   data() {
     return {
+      alertType: "",
+      showAlert: false,
+      alertMessage: "",
       type: "Telegrama",
       booleanType: true,
       uploadType: true,
@@ -58,27 +96,124 @@ export default {
         this.inputText = "Ingrese el número de telegrama";
         this.uploadType = true;
       }
-      this.$refs.textField.reset(); // Clear the text field
+      this.$refs.textField.reset();
     },
 
     subirTelegrama() {
-        console.log("subo telegrama");
+      console.log("subo telegrama");
     },
 
-    subirQuiniela() {
-        console.log("subo quiniela");
+    async subirQuiniela() {
+      const avalNumero = parseInt(this.inputValue, 10);
+      if (isNaN(avalNumero)) {
+          this.alertType = "warning";
+          this.alertMessage = "Ingrese un número de orden válido.";
+          this.showAlert = true;
+          setTimeout(() => {
+                this.showAlert = false;
+              }, 3500);
+        return;
+      }
+
+      const snapshotAvalCargados = await firebase
+        .database()
+        .ref("avalesCargados")
+        .once("value");
+      const avalesCargados = snapshotAvalCargados.val();
+
+      if (avalesCargados) {
+        // Verificar que avalesCargados no sea undefined
+        if (
+          Object.values(avalesCargados).some(
+            (avalCargado) => avalCargado.avalNumero === avalNumero
+          )
+        ) {
+          // Si el aval ya existe en avalesCargados, mostrar una alerta y no continuar
+          this.alertType = "error";
+          this.alertMessage = `El aval ${avalNumero} ya fue cargado previamente.`;
+          this.showAlert = true;
+          this.inputValue = ""; // Limpiar el campo de entrada después de mostrar la alerta
+
+          // Configurar el temporizador para ocultar el v-alert después de 3 segundos
+          setTimeout(() => {
+            this.showAlert = false;
+          }, 3500);
+          return;
+        }
+      }
+
+      const snapshot = await firebase.database().ref("avales").once("value");
+      const personasAval = snapshot.val();
+
+      if (personasAval) {
+        // Verificar que personasAval no sea undefined
+        let persona;
+        Object.keys(personasAval).forEach((key) => {
+          const avales = personasAval[key]?.avales;
+          if (avales && avales.includes(avalNumero)) {
+            persona = personasAval[key].name;
+          }
+        });
+
+        if (persona) {
+          // Si el aval existe y corresponde a una persona, lo guardamos en el nuevo objeto
+          const nuevoAval = {
+            avalNumero: avalNumero,
+            fechaCarga: new Date().toISOString(),
+            persona: persona,
+          };
+
+          firebase
+            .database()
+            .ref("avalesCargados")
+            .push(nuevoAval)
+            .then(() => {
+              this.alertType = "success";
+              this.alertMessage = `Aval <b>${avalNumero}</b> cargado exitosamente a nombre de <b>${persona}</b>.`;
+              this.showAlert = true;
+              this.inputValue = ""; // Limpiar el campo de entrada después de cargar el aval
+              setTimeout(() => {
+                this.showAlert = false;
+              }, 3500);
+            })
+            .catch((error) => {
+              console.error("Error al cargar el aval:", error);
+            });
+        } else {
+          this.alertType = "warning";
+          this.alertMessage = `El aval ${avalNumero} no existe o no corresponde a ninguna persona.`;
+          this.showAlert = true;
+          setTimeout(() => {
+                this.showAlert = false;
+              }, 3500);
+        }
+      } else {
+          this.alertType = "warning";
+          this.alertMessage = "No hay datos de avales en la base de datos";
+          this.showAlert = true;
+          setTimeout(() => {
+                this.showAlert = false;
+              }, 3500);
+      }
     },
 
     handleEnterKeyPress() {
       // Trigger the click event of the "Subir" button when Enter key is pressed
       this.$refs.subirButton.$el.click();
-      
     },
   },
 };
 </script>
-  
-  <style>
+
+<style>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s; /* Duración de la animación (0.5 segundos) */
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active en <2.1.8 */ {
+  opacity: 0;
+}
+
 .tarjeta-votos {
   width: 40rem;
   height: 18rem;
