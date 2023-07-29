@@ -3,9 +3,9 @@
     <v-card width="47%" rounded="xxl" class="vue-card">
       <div class="card-state">
         <div class="card-row">
-          <p class="label mt-8">Estado de voto</p>
+          <p class="label mt-8">Estado de aval</p>
           <p class="label mt-8">Cantidad</p>
-          <p class="label mt-8">Porcentajes</p>
+          <p class="label mt-8">Porcentaje</p>
         </div>
         <v-divider color="black" class="ml-10 mr-10"></v-divider>
         <div class="card-data">
@@ -14,18 +14,27 @@
             <p class="label mt-5 mb-10">Pendientes</p>
           </div>
           <div class="card-column">
-            <p class="label mt-6 mr-10" style="color: #1baed0">11.000</p>
-            <p class="label mt-5 mb-10 mr-10" style="color: #8a8f90">4.000</p>
+            <p class="label mt-6 mr-10" style="color: #1baed0">
+              {{ avalesConfirmados }}
+            </p>
+            <p class="label mt-5 mb-10 mr-10" style="color: #8a8f90">
+              {{ totalAvales - avalesConfirmados }}
+            </p>
           </div>
           <div class="card-column">
-            <p class="label mt-6 mr-7" style="color: #1baed0">75%</p>
-            <p class="label mt-5 mb-10 mr-7" style="color: #8a8f90">25%</p>
+            <p class="label mt-6 mr-7" style="color: #1baed0">
+              {{ (avalesConfirmados * 100) / totalAvales }}%
+            </p>
+            <p class="label mt-5 mb-10 mr-7" style="color: #8a8f90">
+              {{ 100 - (avalesConfirmados * 100) / totalAvales }}%
+            </p>
           </div>
         </div>
       </div>
     </v-card>
-    <div class="chart-container">
+    <div class="chart-container" v-if="chartDataState">
       <Doughnut
+        ref="doughnut "
         :data="chartData"
         :options="chartOptions"
         style="width: 28rem"
@@ -37,37 +46,89 @@
 <script>
 import { Doughnut } from "vue-chartjs";
 export default {
-    components: {
-      Doughnut,
+  components: {
+    Doughnut,
+  },
+  props: {
+    numeroDeAvales: {
+      type: Array,
+      required: true,
     },
-    data() {
-      return {
-        chartData: {
-          labels: ["Confirmados", "Pendientes"],
-          datasets: [
-            {
-              label: "Votos",
-              backgroundColor: ["#1BAED0", "#8A8F90"],
-              backgroundColorHover: ["#0197BA", "#8A8F90    "],
-              data: [11, 4],
-            },
-          ],
-        },
-        chartOptions: {
-          responsive: true,
-          plugins: {
-            legend: false,
+    avalesCargados: {
+      type: Object,
+      required: true,
+    },
+  },
+  data() {
+    return {
+      avalesConfirmados: 0,
+      totalAvales: 0,
+      chartDataState: null,
+      chartData: {
+        labels: ["Confirmados", "Pendientes"],
+        datasets: [
+          {
+            label: "Votos",
+            backgroundColor: ["#1BAED0", "#8A8F90"],
+            backgroundColorHover: ["#0197BA", "#8A8F90    "],
+            data: [1, 1],
           },
-          maintainAspectRatio: false,
+        ],
+      },
+      chartOptions: {
+        responsive: true,
+        plugins: {
+          legend: false,
         },
-      };
+        maintainAspectRatio: false,
+      },
+    };
+  },
+  async mounted() {
+    await this.actualizarChart();
+  },
+
+  watch: {
+    numeroDeAvales: "actualizarChart",
+    avalesCargados: "actualizarChart",
+  },
+  methods: {
+    async countTotalAvals(data) {
+      if (data) {
+        Object.values(data).forEach((persona) => {
+          if (persona.avales) {
+            this.totalAvales += Object.keys(persona.avales).length;
+          }
+        });
+      }
     },
+
+    async contarAvalConfirmado(avales) {
+      let conteoTotal = 0;
+
+      Object.values(avales).forEach((uid) => {
+        if (uid.avalNumero) {
+          conteoTotal++;
+        }
+      });
+      this.avalesConfirmados = conteoTotal;
+    },
+    async actualizarChart() {
+      await this.countTotalAvals(this.numeroDeAvales);
+      await this.contarAvalConfirmado(this.avalesCargados);
+
+      this.chartData.datasets[0].data[0] = this.avalesConfirmados;
+      this.chartData.datasets[0].data[1] =
+        this.totalAvales - this.avalesConfirmados;
+      // Establecer chartDataState en su valor actual
+      this.chartDataState = { ...this.chartDataState };
+
+    },
+  },
 };
 </script>
 
 <style>
-
-
 .vue-card {
   display: flex;
   flex-direction: column;

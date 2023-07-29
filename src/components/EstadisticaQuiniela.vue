@@ -2,22 +2,47 @@
   <div class="statistics">
       <div class="statistic">
         <p class="label mb-0 mt-3">Padrón electoral</p>
-        <p class="value mb-3">50.000</p>
+        <p class="value mb-3">{{padron}}</p>
       </div>
       <div class="statistic">
         <p class="label mb-0 mt-3">Avales</p>
-        <p class="value mb-3">15.000</p>
+        <p class="value mb-3">{{totalAvales}}</p>
       </div>
-      <div class="statistic">
+      <!-- <div class="statistic">
         <p class="label mb-0 mt-3">Porcentaje confirmado</p>
-        <p class="value mb-3">{{ participationPercentage }}%</p>
-      </div>
+        <p class="value mb-3">{{ totalAvales*100/padron }}</p>
+      </div> -->
     </div>
 </template>
 
 <script>
 export default {
-
+  props: {
+    numeroDeAvales: {
+      type: Array,
+      required: true,
+    },
+  },
+  data() {
+    return {
+      padron: 460,
+      totalAvales: 0, 
+    }
+  },
+  mounted() {
+    this.countTotalAvals(this.numeroDeAvales);
+  },
+  methods: {
+    countTotalAvals(data) {
+      if (data) {
+        Object.values(data).forEach((persona) => {
+          if (persona.avales) {
+            this.totalAvales += Object.keys(persona.avales).length;
+          }
+        });
+      }
+    },
+  },
 }
 </script>
 
@@ -26,7 +51,7 @@ export default {
   background: #f3f3f3;
   box-shadow: 0px 10px 75px 25px rgba(1, 151, 186, 0.05);
   display: flex;
-  justify-content: space-around;
+  justify-content: space-evenly;
 }
 
 .statistic {

@@ -14,7 +14,7 @@
 
     <div class="person-details" v-if="selectedPerson">
       <div class="nombre-avales">
-        <p id="nombre">Nombre:</p>
+        <p id="nombre" class="d-flex flex-row justify-end">Nombre:</p>
         <p id="nombre">Avales confirmados:</p>
       </div>
       <div class="datos-avales ml-7">
@@ -47,53 +47,45 @@
 </template>
 
 <script>
-import firebase from "firebase/app";
-import "firebase/database";
-
 export default {
+  props: {
+    numeroDeAvales: {
+      type: Array,
+      required: true,
+    },
+    avalesCargados: {
+      type: Object,
+      required: true,
+    },
+  },
   data() {
     return {
       peopleWithAvals: [],
       selectedPersonName: null,
-      avalesCargados: {},
     };
   },
-
-  mounted() {
-    this.getAvalsData();
-    this.getAvalesCargadosData();
+mounted() {
+    this.agruparAvalesCargados(this.avalesCargados);
   },
-
   methods: {
-    getAvalesCargadosData() {
-      firebase
-        .database()
-        .ref("avalesCargados")
-        .once("value")
-        .then((snapshot) => {
-          const data = snapshot.val();
+    agruparAvalesCargados(data) {
+      const personasAval = {};
 
-          const personasAval = {};
+      // Agrupo los avales por el campo "persona"
+      Object.values(data).forEach((aval) => {
+        const persona = aval.persona;
+        if (persona && !personasAval[persona]) {
+          personasAval[persona] = [aval];
+        } else if (persona && personasAval[persona]) {
+          personasAval[persona].push(aval);
+        }
+      });
 
-          // Agrupo los avales por el campo "persona"
-          Object.values(data).forEach((aval) => {
-            const persona = aval.persona;
-            if (persona && !personasAval[persona]) {
-              personasAval[persona] = [aval];
-            } else if (persona && personasAval[persona]) {
-              personasAval[persona].push(aval);
-            }
-          });
-
-          // Creo una lista de objetos con las personas y sus avales
-          this.peopleWithAvals = Object.keys(personasAval).map((persona) => ({
-            name: persona,
-            avales: personasAval[persona],
-          }));
-        })
-        .catch((error) => {
-          console.error("Error fetching avales cargados data:", error);
-        });
+      // Creo una lista de objetos con las personas y sus avales
+      this.peopleWithAvals = Object.keys(personasAval).map((persona) => ({
+        name: persona,
+        avales: personasAval[persona],
+      }));
     },
 
     getAvalesConfirmados(persona) {
@@ -109,20 +101,6 @@ export default {
       }
       // Si no tiene avales, devolvemos 0
       return 0;
-    },
-
-    getAvalsData() {
-      firebase
-        .database()
-        .ref("avales")
-        .once("value")
-        .then((snapshot) => {
-          const data = snapshot.val();
-          this.numeroDeAvales = Object.values(data);
-        })
-        .catch((error) => {
-          console.error("Error fetching avales data:", error);
-        });
     },
   },
 
@@ -185,8 +163,8 @@ export default {
   font-size: 2.5rem;
   font-weight: 700;
 }
-.v-application {
-    margin: 0
+.v-application p {
+  margin-bottom: 0px;
 }
 .v-input__slot {
   width: 25rem;
