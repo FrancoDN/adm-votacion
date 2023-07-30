@@ -43,11 +43,23 @@
         </p>
       </div>
     </div>
+    <pdf-quiniela
+      v-if="selectedPersonName && avalesCargados"
+      :selectedPersonName="selectedPersonName"
+      :avales="avalesCargados"
+      :numeroDeAvales="numeroDeAvales"
+    />
+
   </div>
 </template>
 
 <script>
+import PdfQuiniela from "@/components/PdfQuiniela";
+
 export default {
+  components: {
+    PdfQuiniela,
+  },
   props: {
     numeroDeAvales: {
       type: Array,
@@ -68,6 +80,15 @@ mounted() {
     this.agruparAvalesCargados(this.avalesCargados);
   },
   methods: {
+    getSelectedPersonId(selectedPersonName) {
+      // Busca en el arreglo "numeroDeAvales" la persona con el nombre seleccionado
+      // y devuelve el ID (o un identificador único) de esa persona
+      const selectedPerson = this.numeroDeAvales.find(
+        (person) => person.name === selectedPersonName
+      );
+      return selectedPerson ? selectedPerson.id : null;
+    },
+
     agruparAvalesCargados(data) {
       const personasAval = {};
 
