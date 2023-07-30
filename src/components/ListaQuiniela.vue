@@ -44,7 +44,6 @@
       </div>
     </div>
     <pdf-quiniela
-      v-if="selectedPersonName && avalesCargados"
       :selectedPersonName="selectedPersonName"
       :avales="avalesCargados"
       :numeroDeAvales="numeroDeAvales"

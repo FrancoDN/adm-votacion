@@ -3,7 +3,7 @@
     class="botonera"
     style="width: 60%; margin-top: 1.5rem; margin-bottom: 1.5rem"
   >
-    <button @click="createPDF" class="individual">
+    <button @click="createPDF" class="individual" v-if="selectedPersonName">
       <p style="color: white; font-weight: 700">
         Descargar avales individuales
       </p>

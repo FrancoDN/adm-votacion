@@ -3,7 +3,7 @@
     <v-card width="47%" rounded="xxl" class="vue-card">
       <div class="card-state">
         <div class="card-row">
-          <p class="label mt-8">Estado de aval</p>
+          <p class="label mt-8">Estado de avales</p>
           <p class="label mt-8">Cantidad</p>
           <p class="label mt-8">Porcentaje</p>
         </div>
@@ -22,11 +22,11 @@
             </p>
           </div>
           <div class="card-column">
-            <p class="label mt-6 mr-7" style="color: #1baed0">
-              {{ (avalesConfirmados * 100) / totalAvales }}%
+            <p class="label mt-6" style="color: #1baed0">
+              {{ ((avalesConfirmados * 100) / totalAvales).toFixed(2) }}%
             </p>
-            <p class="label mt-5 mb-10 mr-7" style="color: #8a8f90">
-              {{ 100 - (avalesConfirmados * 100) / totalAvales }}%
+            <p class="label mt-5 mb-10" style="color: #8a8f90">
+              {{ (100 - (avalesConfirmados * 100) / totalAvales).toFixed(2) }}%
             </p>
           </div>
         </div>
