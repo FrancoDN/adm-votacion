@@ -8,13 +8,12 @@
       @cambiar-voto="cambiarVoto"
     ></admin-botonera>
     <div class="admin">
-      <admin-estadistica
+      <!-- <admin-estadistica
         :tipoVoto="tipoVoto"
         class="d-flex flex-column mt-7"
-      ></admin-estadistica>
+      ></admin-estadistica> -->
       <admin-conteo
         :tipoVoto="tipoVoto"
-        class="d-flex flex-column mt-5"
       ></admin-conteo>
     </div>
   </div>
@@ -22,12 +21,12 @@
 
 <script>
 import AdminConteo from "@/components/AdminConteo.vue";
-import AdminEstadistica from "@/components/AdminEstadistica.vue";
+// import AdminEstadistica from "@/components/AdminEstadistica.vue";
 import AdminBotonera from "@/components/AdminBotonera.vue";
 export default {
   components: {
     AdminConteo,
-    AdminEstadistica,
+    // AdminEstadistica,
     AdminBotonera,
   },
   data() {
@@ -55,5 +54,6 @@ p {
   align-items: center;
   justify-content: space-evenly;
   height: 100%;
+  width: 100%;
 }
 </style>

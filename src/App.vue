@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <!-- <v-app-bar app color="#0197BA" dark>
+    <v-app-bar app color="#0197BA" dark>
       <v-img
         src="./assets/vane.png"
         max-height="10rem"
@@ -12,7 +12,7 @@
       <v-btn v-if="shouldShowSignOutButton" color="red" large @click="signOut">
         Salir
       </v-btn>
-    </v-app-bar> -->
+    </v-app-bar>
 
     <v-main>
       <router-view />

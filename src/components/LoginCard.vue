@@ -26,6 +26,7 @@
 <script>
 import firebase from "firebase";
 import "firebase/auth";
+import { isAdminUser } from '../router/guard'; // Importa el guard isAdminUser
 
 export default {
   name: "LoginCard",
@@ -38,15 +39,14 @@ export default {
   }),
 
   methods: {
-    login() {
+   async login() {
       firebase
         .auth()
         .signInWithEmailAndPassword(this.user.email, this.user.password)
         .then((userCredential) => {
           // Obtener el usuario actual
           const user = userCredential.user;
-          console.log(user.uid);
-          // Obtener información adicional desde la base de datos
+          this.$router.replace('user');
           this.getUserInfo(user.uid);
         })
         .catch((err) => {
@@ -63,10 +63,10 @@ export default {
           .then((snapshot) => {
             const userInfo = snapshot.val();
             // Hacer algo con la información obtenida, por ejemplo, redirigir a la página correspondiente
-            if (userInfo && userInfo.isAdmin) {
-              this.$router.push("/admin");
+            if (userInfo) {
+              isAdminUser(userInfo.isAdmin)
             } else {
-              this.$router.push("/user");
+              this.$router.push("/error");
             }
           })
           .catch((error) => {
@@ -78,7 +78,6 @@ export default {
     },
   },
 
-  created() {},
 };
 </script>
 
@@ -99,6 +98,6 @@ p {
   
 }
 .v-input__slot {
-  margin: 0;
+ margin-left: 0rem;
 }
 </style>

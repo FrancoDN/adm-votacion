@@ -4,6 +4,9 @@ import LoginView from '../views/LoginView.vue'
 import AdminView from '../views/AdminView.vue'
 import UserView from '../views/UserView.vue'
 import QuinielaView from '../views/QuinielaView.vue'
+import firebase from "firebase/app";
+import "firebase/auth";
+import "firebase/database";
 
 Vue.use(VueRouter)
 
@@ -16,17 +19,28 @@ const routes = [
   {
     path: '/admin',
     name: 'admin',
-    component: AdminView
+    component: AdminView,
+    meta: {
+      requiresAuth: true,
+      isAdminRoute: true
+    }
   },
   {
     path: '/user',
     name: 'user',
-    component: UserView
+    component: UserView,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/quiniela',
     name: 'quiniela',
-    component: QuinielaView
+    component: QuinielaView,
+    meta: {
+      requiresAuth: true,
+      isAdminRoute: true
+    }
   },
   // {
   //   path: '/about',
@@ -41,5 +55,51 @@ const routes = [
 const router = new VueRouter({
   routes
 })
+
+router.beforeEach(async (to, from, next) => {
+  const currentUser = firebase.auth().currentUser;
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+
+  if (requiresAuth && !currentUser) {
+    next('/');
+  } else if (requiresAuth && currentUser) {
+    try {
+      const userInfo = await getUserInfo(currentUser.uid);
+      console.log(userInfo);
+      if (userInfo && userInfo.isAdmin) {
+        // Si el usuario es un administrador (isAdmin: true), déjalo pasar a cualquier ruta.
+        next();
+      } else  {
+        // Si el usuario no es un administrador (isAdmin: false),
+        // permítele acceder solo a rutas protegidas que no sean para administradores.
+        if (to.matched.some(record => record.meta.isAdminRoute)) {
+          next({ path: '/user' });
+        } else {
+          next();
+        }
+      }
+    } catch (error) {
+      console.error('Error obteniendo información del usuario:', error);
+      next('/');
+    }
+  } else {
+    next();
+  }
+});
+
+function getUserInfo(uid) {
+  return firebase
+    .database()
+    .ref("users/" + uid)
+    .once("value")
+    .then((snapshot) => {
+      const userInfo = snapshot.val();
+      return userInfo; // Devuelve directamente el valor de isAdmin
+    })
+    .catch((error) => {
+      console.error("Error obteniendo información del usuario:", error);
+      throw error; // Lanza el error para manejarlo en el guard si es necesario
+    });
+}
 
 export default router
