@@ -11,17 +11,25 @@
           <div v-if="!showVotesOnRight(index)" class="datosIzquierda">
             <!-- Mostrar votos a la derecha del nombre del político -->
             <div class="" style="display: flex; flex-direction: column;">
-              <p class="nombreCandidato">{{ resultado.politico }}</p>
-              <p class="partidoPolitico">{{ resultado.partido }}</p>
+              <p v-if="showVotesOnRight(index)" class="nombreCandidato" v-html="splitName(resultado.politico)"></p>
+              <p v-if="!showVotesOnRight(index)" class="nombreCandidatoIzquierda" v-html="splitName(resultado.politico)"></p>
+              <p  class="partidoPolitico">{{ resultado.partido }}</p>
             </div>
-            <p v-if="!showVotesOnRight(index)" class="votosPartido">{{ resultado.votos }} votos</p>
+            <div class="d-flex flex-column">
+              <p class="votosPorcentaje">{{ (resultado.votos * 100 / padron).toFixed(2) }}%</p>
+              <p class="votosPartido">{{ resultado.votos }} votos</p>
+            </div>
           </div>
 
           <div v-if="showVotesOnRight(index)" class="datosDerecha">
             <!-- Mostrar votos a la derecha del nombre del político -->
-            <p class="votosPartido">{{ resultado.votos }} votos</p>
+            <div class="d-flex flex-column">
+              <p class="votosPorcentaje">{{ (resultado.votos * 100 / padron).toFixed(2) }}%</p>
+              <p class="votosPartido">{{ resultado.votos }} votos</p>
+            </div>
             <div class="" style="display: flex; flex-direction: column; ">
-              <p class="nombreCandidato">{{ resultado.politico }}</p>
+              <p v-if="!showVotesOnRight(index)" class="nombreCandidatoIzquierda" v-html="splitName(resultado.politico)"></p>
+              <p v-if="showVotesOnRight(index)" class="nombreCandidato" v-html="splitName(resultado.politico)"></p>
               <p class="partidoPolitico">{{ resultado.partido }}</p>
             </div>
           </div>
@@ -38,17 +46,25 @@
           <div v-if="!showVotesOnRight(index)" class="datosIzquierda">
             <!-- Mostrar votos a la derecha del nombre del político -->
             <div class="" style="display: flex; flex-direction: column;">
-              <p class="nombreCandidato">{{ resultado.politico }}</p>
+              <p v-if="!showVotesOnRight(index)" class="nombreCandidatoIzquierda" v-html="splitName(resultado.politico)"></p>
+              <p v-if="showVotesOnRight(index)" class="nombreCandidato" v-html="splitName(resultado.politico)"></p>
               <p class="partidoPolitico">{{ resultado.partido }}</p>
             </div>
-            <p v-if="!showVotesOnRight(index)" class="votosPartido">{{ resultado.votos }} votos</p>
+            <div class="d-flex flex-column">
+              <p class="votosPorcentaje">{{ (resultado.votos * 100 / padron).toFixed(2) }}%</p>
+              <p class="votosPartido">{{ resultado.votos }} votos</p>
+            </div>
           </div>
 
           <div v-if="showVotesOnRight(index)" class="datosDerecha">
             <!-- Mostrar votos a la derecha del nombre del político -->
-            <p class="votosPartido">{{ resultado.votos }} votos</p>
+            <div class="d-flex flex-column">
+              <p class="votosPorcentaje">{{ (resultado.votos * 100 / padron).toFixed(2) }}%</p>
+              <p class="votosPartido">{{ resultado.votos }} votos</p>
+            </div>
             <div class="" style="display: flex; flex-direction: column; ">
-              <p class="nombreCandidato">{{ resultado.politico }}</p>
+              <p v-if="!showVotesOnRight(index)" class="nombreCandidatoIzquierda" v-html="splitName(resultado.politico)"></p>
+              <p v-if="showVotesOnRight(index)" class="nombreCandidato" v-html="splitName(resultado.politico)"></p>
               <p class="partidoPolitico">{{ resultado.partido }}</p>
             </div>
           </div>
@@ -65,17 +81,25 @@
           <div v-if="!showVotesOnRight(index)" class="datosIzquierda">
             <!-- Mostrar votos a la derecha del nombre del político -->
             <div class="" style="display: flex; flex-direction: column;">
-              <p class="nombreCandidato">{{ resultado.politico }}</p>
+              <p v-if="!showVotesOnRight(index)" class="nombreCandidatoIzquierda" v-html="splitName(resultado.politico)"></p>
+              <p v-if="showVotesOnRight(index)" class="nombreCandidato" v-html="splitName(resultado.politico)"></p>
               <p class="partidoPolitico">{{ resultado.partido }}</p>
             </div>
-            <p v-if="!showVotesOnRight(index)" class="votosPartido">{{ resultado.votos }} votos</p>
+            <div class="d-flex flex-column">
+              <p class="votosPorcentaje">{{ (resultado.votos * 100 / padron).toFixed(2) }}%</p>
+              <p class="votosPartido">{{ resultado.votos }} votos</p>
+            </div>
           </div>
 
           <div v-if="showVotesOnRight(index)" class="datosDerecha">
             <!-- Mostrar votos a la derecha del nombre del político -->
-            <p class="votosPartido">{{ resultado.votos }} votos</p>
+            <div class="d-flex flex-column">
+              <p class="votosPorcentaje">{{ (resultado.votos * 100 / padron).toFixed(2) }}%</p>
+              <p class="votosPartido">{{ resultado.votos }} votos</p>
+            </div>
             <div class="" style="display: flex; flex-direction: column; ">
-              <p class="nombreCandidato">{{ resultado.politico }}</p>
+              <p v-if="!showVotesOnRight(index)" class="nombreCandidatoIzquierda" v-html="splitName(resultado.politico)"></p>
+              <p v-if="showVotesOnRight(index)" class="nombreCandidato" v-html="splitName(resultado.politico)"></p>
               <p class="partidoPolitico">{{ resultado.partido }}</p>
             </div>
           </div>
@@ -90,25 +114,36 @@
           justifyContent: 'center',
         }">
 
-          <div v-if="!showVotesOnRight(index)" class="datosIzquierda">
+          <div v-if="!showVotesOnRight(index)" class="ultimaFila">
             <!-- Mostrar votos a la derecha del nombre del político -->
-            <p v-if="index === 2" class="votosPartido">{{ resultado.votos }} votos</p>
+            <div class="d-flex flex-column" v-if="index === 2">
+              <p class="votosPorcentaje">{{ (resultado.votos * 100 / padron).toFixed(2) }}%</p>
+              <p class="votosPartido">{{ resultado.votos }} votos</p>
+            </div>
 
             <div class="" style="display: flex; flex-direction: column;">
-              <p class="nombreCandidato">{{ resultado.politico }}</p>
+              <p  class="nombreCandidato" v-html="splitName(resultado.politico)"></p>
               <p class="partidoPolitico">{{ resultado.partido }}</p>
             </div>
-            <p v-if="index === 0" class="votosPartido">{{ resultado.votos }} votos</p>
+            <div class="d-flex flex-column" v-if="index === 0">
+              <p class="votosPorcentaje">{{ (resultado.votos * 100 / padron).toFixed(2) }}%</p>
+              <p class="votosPartido">{{ resultado.votos }} votos</p>
+            </div>
 
           </div>
 
-          <div v-if="showVotesOnRight(index)" class="datosDerecha">
+          <div v-if="showVotesOnRight(index)" class="ultimaFila">
             <!-- Mostrar votos a la derecha del nombre del político -->
             <div class="" style="display: flex; flex-direction: column; ">
-              <p class="nombreCandidato">{{ resultado.politico }}</p>
+              <p  class="nombreCandidato" v-html="splitName(resultado.politico)"></p>
               <p class="partidoPolitico">{{ resultado.partido }}</p>
             </div>
-            <p class="votosPartido">{{ resultado.votos }} votos</p>
+
+
+            <div class="d-flex flex-column">
+              <p class="votosPartido">{{ resultado.votos }} votos</p>
+              <p class="votosPorcentaje">{{ (resultado.votos * 100 / padron).toFixed(2) }}%</p>
+            </div>
 
           </div>
         </div>
@@ -142,7 +177,7 @@ export default {
         {
           partido: "Juntos por el cambio",
           politico: "Pablo SWAR",
-          votos: 600,
+          votos: 900,
           color: "#E1B530",
         },
         {
@@ -183,6 +218,7 @@ export default {
         },
         // Agrega más objetos para los demás partidos
       ],
+      padron: 43000,
     };
   },
 
@@ -250,11 +286,16 @@ export default {
     showVotesOnRight(index) {
       return index % 2 === 1; // Retorna true para índices impares (columna derecha) y false para índices pares (columna izquierda)
     },
+    splitName(fullName) {
+      // Dividir el nombre y el apellido por un salto de línea (<br>)
+      const [nombre, apellido] = fullName.split(" ");
+      return `${nombre}<br>${apellido}`;
+    },
   },
 };
 </script>
 <style>
-@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;500;600;700;800;900;1000&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,400;0,500;0,600;0,700;0,800;0,900;0,1000;1,300&family=Open+Sans:wght@800&family=Russo+One&display=swap');
 
 p {
   font-family: "Nunito", sans-serif;
@@ -268,22 +309,48 @@ p {
 .datosDerecha {
   display: flex;
   width: 100%;
-  justify-content: space-between;
   align-items: center;
+  justify-content: end;
 }
 
 .datosIzquierda {
   display: flex;
   width: 100%;
-  justify-content: space-between;
   align-items: center;
+}
+
+.ultimaFila {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
 }
 
 .nombreCandidato {
   font-size: 2.5rem;
   font-style: normal;
-  font-weight: 700;
+  font-weight: 800;
   color: white;
+  white-space: pre-line;
+  font-family: Open Sans;
+}
+.nombreCandidatoIzquierda {
+  font-size: 2.5rem;
+  font-style: normal;
+  font-weight: 800;
+  color: white;
+  white-space: pre-line;
+  font-family: Open Sans;
+  text-align: right;
+}
+
+.votosPorcentaje {
+  font-size: 1.875rem;
+  font-style: normal;
+  font-weight: 400;
+  color: white;
+  font-family: Russo One;
+
 }
 
 .votosPartido {
