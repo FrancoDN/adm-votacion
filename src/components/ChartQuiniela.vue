@@ -1,6 +1,6 @@
 <template>
   <div class="card-chart">
-    <v-card width="47%" rounded="xxl" class="vue-card">
+    <v-card width="50rem" rounded="xxl" class="vue-card">
       <div class="card-state">
         <div class="card-row">
           <p class="label mt-8">Estado de avales</p>
@@ -37,7 +37,7 @@
         ref="doughnut "
         :data="chartData"
         :options="chartOptions"
-        style="width: 28rem"
+        style="width: 23rem"
       />
     </div>
   </div>
@@ -134,7 +134,7 @@ export default {
   flex-direction: column;
   justify-content: space-between;
   justify-content: center;
-  height: 23rem;
+  height: 20rem;
 }
 
 .card-chart {
@@ -142,8 +142,8 @@ export default {
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  padding-top: 3rem;
-  padding-bottom: 3rem;
+  padding-bottom: 2rem;
+  padding-top: 2rem;
 }
 
 .card-row,
@@ -161,6 +161,5 @@ export default {
 .chart-container {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
 }
 </style>

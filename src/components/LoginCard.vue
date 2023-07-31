@@ -1,29 +1,26 @@
 <template>
-  <v-form class="form" @submit.prevent="login">
-    <v-card elevation="5" class="tarjeta-login">
-      <v-container>
-        <v-card-title> <p>Login</p></v-card-title>
-        <v-card-text>
-          <v-col cols="12" sm="12" md="12">
-            <v-text-field
-              label="Email"
-              prepend-icon="mdi-account-circle"
-              v-model="user.email"
-            ></v-text-field>
-            <v-text-field
-              type="password"
-              label="Contraseña"
-              prepend-icon="mdi-lock"
-              v-model="user.password"
-            ></v-text-field>
-          </v-col>
-        </v-card-text>
-        <v-card-actions class="d-flex justify-end">
-          <v-btn color="primary" elevation="2" type="submit">Entrar</v-btn>
-        </v-card-actions>
-      </v-container>
-    </v-card>
-  </v-form>
+  <div
+    style="
+      background-color: #0197ba;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    "
+  >
+    <img src="../assets/vane.png" alt="" style="width: 30rem" />
+
+    <p style="font-size: 3rem; font-weight: 700; color: white" class="mt-6">
+      Sistema de fiscalización
+    </p>
+      <v-text-field v-model="user.email" class="mt-6" label="Ingrese el email" solo style="border-radius: 15rem;"></v-text-field>
+      <v-text-field v-model="user.password" class="mt-4" label="Ingrese la contraseña" type="password" solo style="border-radius: 15rem;"></v-text-field>
+    <button @click="login" class="login mt-4">
+      <p style="font-size: 1.2rem; font-weight: 600; margin: 0.2rem;">Ingresar</p>
+    </button>
+  </div>
 </template>
 
 <script>
@@ -88,18 +85,20 @@ export default {
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;500;600;700;800;900;1000&display=swap");
 p {
-  font-weight: 800;
-  font-size: x-large;
   font-family: "Nunito", sans-serif;
 }
-.form {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
+
+.v-input {
+  flex: 0;
 }
 
-.tarjeta-login {
-  width: 25%;
+.login {
+  background: #E1B530;
+  width: 25rem;
+  border-radius: 15rem;
+  
+}
+.v-input__slot {
+  margin: 0;
 }
 </style>
