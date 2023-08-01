@@ -2,7 +2,7 @@
   <div style="width: 100%; height: 90%; ">
     <div class="centro">
       <p style="font-size: 2.7vw; font-family: Open Sans; margin-bottom: -1.3vw;">TOTAL</p>
-      <p style="font-size: 2.7vw; font-family: Russo One; color: #1BAED0; margin-bottom: -1vw;">{{ 25678 |
+      <p style="font-size: 2.7vw; font-family: Russo One; color: #1BAED0; margin-bottom: -1vw;">{{ sumaVotos |
         formatThousands }}</p>
       <p style="font-size: 1.2vw; font-family: Open Sans;">VOTOS</p>
     </div>
@@ -196,6 +196,8 @@
 <script>
 import 'chart.js/auto';
 import { Doughnut } from "vue-chartjs";
+import firebase from "firebase/app";
+import "firebase/database";
 export default {
   components: {
     Doughnut,
@@ -214,15 +216,15 @@ export default {
   },
   data() {
     return {
+      sumaVotos: 0,
       chartDataState: true,
       chartData: {
         labels: ["Confirmados", "Pendientes"],
         datasets: [
           {
             label: "Votos",
-            backgroundColor: ["#1BAED0", "#8A8F90"],
-            backgroundColorHover: ["#0197BA", "#8A8F90    "],
-            data: [1, 1],
+            backgroundColor: [],
+            data: [],
           },
         ],
       },
@@ -233,63 +235,7 @@ export default {
         },
         maintainAspectRatio: false,
       },
-      resultados: [
-        {
-          partido: "Todos por Buenos Aires",
-          politico: "Vanesa QUEYFFER",
-          votos: 20000,
-          color: "#1BAED0",
-        },
-        {
-          partido: "Union por la patria",
-          politico: "Fabian CAGLIARDI",
-          votos: 3000,
-          color: "#05319E",
-        },
-        {
-          partido: "Juntos por el cambio",
-          politico: "Pablo SWAR",
-          votos: 900,
-          color: "#E1B530",
-        },
-        {
-          partido: "FIT",
-          politico: "Federico SURILA",
-          votos: 400,
-          color: "#E15454",
-        },
-        {
-          partido: "Juntos por el cambio",
-          politico: "Matias NANNI",
-          votos: 300,
-          color: "#DD9F00",
-        },
-        {
-          partido: "Nuevo MAS",
-          politico: "Juana GAMARRA",
-          votos: 200,
-          color: "#981414",
-        },
-        {
-          partido: "FIT",
-          politico: "Patricia MESA",
-          votos: 100,
-          color: "#AF3838",
-        },
-        {
-          partido: "La Libertad Avanza",
-          politico: "Roxana GARAVENTO",
-          votos: 50,
-          color: "#5C0F77",
-        },
-        {
-          partido: "Principios y Valores",
-          politico: "Ariel LEGUIZA",
-          votos: 10,
-          color: "#0E537A",
-        },
-        // Agrega más objetos para los demás partidos
-      ],
+      resultados: [],
       padron: 43000,
     };
   },
@@ -328,6 +274,46 @@ export default {
         .sort((a, b) => b.votos - a.votos);
       return ordenados.slice(6);
     },
+  },
+  mounted() {
+    // Recuperar los datos desde Firebase y asignarlos a "resultados"
+    const db = firebase.database();
+    const ref = db.ref("partidos");
+
+    ref.on("value", (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        this.sumaVotos = 0;
+        // Convertir el objeto obtenido de Firebase en un arreglo de candidatos
+        const candidatos = Object.keys(data).map((key) => {
+          const candidato = data[key].candidato;
+          const color = data[key].color;
+          const partido = data[key].nombre;
+          const votos = data[key].votos;
+
+          this.sumaVotos = this.sumaVotos + votos;
+          return { partido, politico: candidato, color, votos: votos };
+        });
+
+        // Ordenar el arreglo de candidatos por votos (puedes omitir esto si ya los tienes ordenados en Firebase)
+        candidatos.sort((a, b) => b.votos - a.votos);
+
+        this.resultados = candidatos;
+
+        this.chartData = {
+          labels: this.resultados.map((r) => r.partido),
+          datasets: [
+            {
+              label: "Votos",
+              backgroundColor: this.resultados.map((r) => r.color),
+              data: this.resultados.map((r) => r.votos),
+            },
+          ],
+        };
+         // Actualizar el valor de "sumaVotos" después de recorrer los datos para obtener el total
+      this.sumaVotos = this.resultados.reduce((total, candidato) => total + candidato.votos, 0);
+      }
+    });
   },
   methods: {
     // actualizarConteo(tipoVoto) {
