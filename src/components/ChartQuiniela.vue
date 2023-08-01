@@ -32,9 +32,8 @@
         </div>
       </div>
     </v-card>
-    <div class="chart-container" v-if="chartDataState">
+    <div class="chart-containerQuiniela" v-if="chartDataState">
       <Doughnut
-        ref="doughnut"
         :data="chartData"
         :options="chartOptions"
         style="width: 23rem"
@@ -44,7 +43,6 @@
 </template>
 
 <script>
-import 'chart.js/auto';
 import { Doughnut } from "vue-chartjs";
 export default {
   components: {
@@ -159,7 +157,7 @@ export default {
   justify-content: space-around;
 }
 
-.chart-container {
+.chart-containerQuiniela {
   display: flex;
   justify-content: center;
 }

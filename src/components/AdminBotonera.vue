@@ -3,33 +3,35 @@
 
     <div class="botones">
       <v-btn
-        width="20rem"
+        width="20vw"
         height="3rem"
         color="#1BAED0"
+        style="background-color: #222324; border-radius: 20rem;"
         :class="{ 'active-button': esActivo('presidencia') }"
         @click="cambiarVoto('presidencia')"
-        ><p style="margin: 0; color: white; font-weight: 600">
+        ><p style="margin: 0; color: white; font-weight: 600; font-family: Open Sans; font-size: 1.2vw;">
           Presidencia
         </p></v-btn
       >
       <v-btn
-        width="20rem"
+        width="20vw"
         height="3rem"
         color="#1BAED0"
         :class="{ 'active-button': esActivo('gobernacion') }"
         @click="cambiarVoto('gobernacion')"
-        style="margin-left: 3rem; margin-right: 3rem"
-        ><p style="margin: 0; color: white; font-weight: 600">
+        style="margin-left: 3rem; margin-right: 3rem; background-color: #222324; border-radius: 20rem;"
+        ><p style="margin: 0; color: white; font-weight: 600; font-family: Open Sans; font-size: 1.2vw;">
           Gobernacion
         </p></v-btn
       >
       <v-btn
-        width="20rem"
+        width="20vw"
         height="3rem"
         color="#1BAED0"
+        style="background-color: #222324; border-radius: 20rem;"
         :class="{ 'active-button': esActivo('intendencia') }"
         @click="cambiarVoto('intendencia')"
-        ><p style="color: white; font-weight: 600; margin: 0">
+        ><p style="color: white; font-weight: 600; font-family: Open Sans; margin: 0; font-size: 1.2vw;'">
           Intendencia
         </p></v-btn
       >
@@ -75,6 +77,6 @@ p {
 }
 
 .active-button {
-  background-color: #e1b530 !important;
+  background-color: #1BAED0 !important;
 }
 </style>
