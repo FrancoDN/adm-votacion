@@ -65,6 +65,7 @@ export default {
             // Hacer algo con la información obtenida, por ejemplo, redirigir a la página correspondiente
             if (userInfo) {
               isAdminUser(userInfo.isAdmin)
+              this.$emit("admin-status-changed", userInfo.isAdmin);
             } else {
               this.$router.push("/error");
             }

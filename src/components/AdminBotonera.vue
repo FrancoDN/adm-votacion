@@ -10,7 +10,7 @@
         :class="{ 'active-button': esActivo('presidencia') }"
         @click="cambiarVoto('presidencia')"
         ><p style="margin: 0; color: white; font-weight: 600; font-family: Open Sans; font-size: 1.2vw;">
-          Presidencia
+          Presidente
         </p></v-btn
       >
       <v-btn
@@ -21,7 +21,7 @@
         @click="cambiarVoto('gobernacion')"
         style="margin-left: 3rem; margin-right: 3rem; background-color: #222324; border-radius: 20rem;"
         ><p style="margin: 0; color: white; font-weight: 600; font-family: Open Sans; font-size: 1.2vw;">
-          Gobernacion
+          Gobernador
         </p></v-btn
       >
       <v-btn
@@ -32,7 +32,7 @@
         :class="{ 'active-button': esActivo('intendencia') }"
         @click="cambiarVoto('intendencia')"
         ><p style="color: white; font-weight: 600; font-family: Open Sans; margin: 0; font-size: 1.2vw;'">
-          Intendencia
+          Intendente
         </p></v-btn
       >
     </div>

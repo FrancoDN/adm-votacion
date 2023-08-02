@@ -10,7 +10,9 @@
       <button @click="estadistica">
         <p class="navBar" v-if="shouldShowEstadisticaButton">ESTADÍSTICAS</p>
       </button>
-      <button @click="quiniela"><p class="navBar" v-if="shouldShowQuinielaButton" >QUINIELA</p></button>
+      <button @click="quiniela">
+        <p class="navBar" v-if="shouldShowQuinielaButton">QUINIELA</p>
+      </button>
       <v-btn v-if="shouldShowSignOutButton" color="#1BAED0" large @click="signOut"
         style="border-radius: 10rem; height: 2.5rem;">
         <p> Salir</p>
@@ -33,16 +35,21 @@ export default {
   data() {
     return {
       showNavbar: true,
+      adminNav: false,
     }
   },
   mounted() {
+    this.$root.$on("admin-status-changed", this.updateAdminStatus);
     // Escuchar el evento fullscreenchange para actualizar la variable showNavbar
     document.addEventListener("fullscreenchange", this.handleFullscreenChange);
     document.addEventListener("webkitfullscreenchange", this.handleFullscreenChange);
     document.addEventListener("mozfullscreenchange", this.handleFullscreenChange);
     document.addEventListener("MSFullscreenChange", this.handleFullscreenChange);
   },
-
+  beforeUnmount() {
+    // Asegurarse de eliminar el listener cuando el componente se desmonta
+    this.$root.$off("admin-status-changed", this.updateAdminStatus);
+  },
   unmounted() {
     // Remover los listeners del evento fullscreenchange al desmontar el componente
     document.removeEventListener("fullscreenchange", this.handleFullscreenChange);
@@ -51,21 +58,31 @@ export default {
     document.removeEventListener("MSFullscreenChange", this.handleFullscreenChange);
   },
   computed: {
+
     // Verifica si la ruta actual es la página de inicio de sesión ("/login" en este caso)
     shouldShowSignOutButton() {
       return this.$route.path !== "/";
     },
     shouldShowCargaButton() {
-      return this.$route.path !== "/user";
+      return this.$route.path !== "/user" && this.$route.path !== "/";
     },
     shouldShowEstadisticaButton() {
-      return this.$route.path !== "/admin";
+      return this.$route.path !== "/admin" && this.adminNav;
     },
     shouldShowQuinielaButton() {
-      return this.$route.path !== "/quiniela";
+      return this.$route.path !== "/quiniela" && this.adminNav;
+    },
+  },
+
+  watch: {
+    adminNav() {
+      this.$forceUpdate();
     },
   },
   methods: {
+    updateAdminStatus(isAdmin) {
+      this.adminNav = isAdmin;
+    },
     toggleFullscreen() {
       const elem = document.documentElement; // Obtener el elemento raíz (el documento)
 
