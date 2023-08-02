@@ -1,16 +1,10 @@
 <template>
   <div style="width: 100%; height: 90%; ">
-    <div v-if="!loading" class="centro">
-      <!-- Resto del código -->
-      <!-- Mostrar el párrafo solo si la suma de votos es mayor que cero -->
-      <p v-if="sumaVotos > 0" style="font-size: 2.7vw; font-family: Open Sans; margin-bottom: -1.3vw;">TOTAL</p>
-      <p v-if="sumaVotos > 0" style="font-size: 2.7vw; font-family: Russo One; color: #1BAED0; margin-bottom: -1vw;">{{
-        sumaVotos | formatThousands }}</p>
-      <p v-if="sumaVotos > 0" style="font-size: 1.2vw; font-family: Open Sans;">VOTOS</p>
-    </div>
-    <div v-else class="centro">
-      <!-- Mostrar un mensaje alternativo mientras se obtienen los datos de Firebase -->
-      <v-progress-circular indeterminate color="primary"></v-progress-circular>
+    <div class="centro">
+      <p style="font-size: 2.7vw; font-family: Open Sans; margin-bottom: -1.3vw;">TOTAL</p>
+      <p style="font-size: 2.7vw; font-family: Russo One; color: #1BAED0; margin-bottom: -1vw;">{{ sumaVotos |
+        formatThousands }}</p>
+      <p style="font-size: 1.2vw; font-family: Open Sans;">VOTOS</p>
     </div>
     <div class="chart-container" v-if="chartDataState">
       <Doughnut ref="doughnut" :data="chartData" :options="chartOptions" />
@@ -205,78 +199,6 @@ import { Doughnut } from "vue-chartjs";
 import firebase from "firebase/app";
 import "firebase/database";
 export default {
-
-  mounted() {
-    // Declare the ref variable at the top
-    const db = firebase.database();
-    const ref = db.ref("partidos");
-
-    const localData = localStorage.getItem(this.localDataKey);
-    if (localData) {
-      // Si los datos locales están presentes, usarlos para inicializar "resultados" y "sumaVotos"
-      this.resultados = JSON.parse(localData);
-      this.sumaVotos = this.resultados.reduce((total, candidato) => total + candidato.votos, 0);
-      this.loading = false; // Indicar que los datos han sido cargados y se puede mostrar el contenido
-    } else {
-
-      // Retrieve data from Firebase only if not stored locally
-      if (!this.resultados.length) {
-        console.log("datos de firebase");
-        ref.once("value", (snapshot) => {
-          const data = snapshot.val();
-          if (data) {
-            this.sumaVotos = 0;
-            // Convert the object obtained from Firebase into an array of candidates
-            const candidatos = Object.keys(data).map((key) => {
-              const candidato = data[key].candidato;
-              const color = data[key].color;
-              const partido = data[key].nombre;
-              const votos = data[key].votos;
-
-              this.sumaVotos = this.sumaVotos + votos;
-              return { partido, politico: candidato, color, votos: votos };
-            });
-
-            // Update the value of "sumaVotos" after iterating through the data to get the total
-            this.sumaVotos = this.resultados.reduce((total, candidato) => total + candidato.votos, 0);
-
-            this.resultados = candidatos;
-            this.actualizarDatosGrafico();
-            // Verificar si los datos locales están presentes y si hay cambios en los votos
-            const localData = localStorage.getItem(this.localDataKey);
-            if (!localData || JSON.stringify(this.resultados) !== localData) {
-              // Si los datos locales no están presentes o los votos son diferentes, actualizar los datos locales
-              localStorage.setItem(this.localDataKey, JSON.stringify(this.resultados));
-              localStorage.setItem("sumaVotos", this.sumaVotos); // Actualizar "sumaVotos" en el almacenamiento local
-            }
-
-            // Save the data to local storage
-            localStorage.setItem(this.localDataKey, JSON.stringify(candidatos));
-            // Actualizar "sumaVotos" después de recorrer los datos para obtener el total
-            this.sumaVotos = this.resultados.reduce((total, candidato) => total + candidato.votos, 0);
-            this.loading = false;
-          }
-        });
-      }
-    }
-
-    // Listen for incremental changes in votes
-    ref.on("child_added", (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        // Update only the vote count of the specific candidate that has changed
-        const candidatoIndex = this.resultados.findIndex((c) => c.politico === data.candidato);
-        if (candidatoIndex !== -1) {
-          this.resultados[candidatoIndex].votos = data.votos;
-          this.sumaVotos = this.resultados.reduce((total, candidato) => total + candidato.votos, 0);
-          this.chartData.datasets[0].data[candidatoIndex] = data.votos;
-          this.actualizarDatosGrafico();
-
-          localStorage.setItem("sumaVotos", this.sumaVotos.toString());
-        }
-      }
-    });
-  },
   components: {
     Doughnut,
   },
@@ -295,7 +217,6 @@ export default {
   data() {
     return {
       sumaVotos: 0,
-      localDataKey: "localPartidosData",
       chartDataState: true,
       chartData: {
         labels: ["Confirmados", "Pendientes"],
@@ -316,7 +237,6 @@ export default {
       },
       resultados: [],
       padron: 43000,
-      loading: true,
     };
   },
 
@@ -355,20 +275,47 @@ export default {
       return ordenados.slice(6);
     },
   },
+  mounted() {
+    // Recuperar los datos desde Firebase y asignarlos a "resultados"
+    const db = firebase.database();
+    const ref = db.ref("partidos");
 
+    ref.on("value", (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        this.sumaVotos = 0;
+        // Convertir el objeto obtenido de Firebase en un arreglo de candidatos
+        const candidatos = Object.keys(data).map((key) => {
+          const candidato = data[key].candidato;
+          const color = data[key].color;
+          const partido = data[key].nombre;
+          const votos = data[key].votos;
+
+          this.sumaVotos = this.sumaVotos + votos;
+          return { partido, politico: candidato, color, votos: votos };
+        });
+
+        // Ordenar el arreglo de candidatos por votos (puedes omitir esto si ya los tienes ordenados en Firebase)
+        candidatos.sort((a, b) => b.votos - a.votos);
+
+        this.resultados = candidatos;
+
+        this.chartData = {
+          labels: this.resultados.map((r) => r.partido),
+          datasets: [
+            {
+              label: "Votos",
+              backgroundColor: this.resultados.map((r) => r.color),
+              data: this.resultados.map((r) => r.votos),
+            },
+          ],
+        };
+         // Actualizar el valor de "sumaVotos" después de recorrer los datos para obtener el total
+      this.sumaVotos = this.resultados.reduce((total, candidato) => total + candidato.votos, 0);
+      }
+    });
+  },
   methods: {
-    actualizarDatosGrafico() {
-      this.chartData = {
-        labels: this.resultados.map((r) => r.partido),
-        datasets: [
-          {
-            label: "Votos",
-            backgroundColor: this.resultados.map((r) => r.color),
-            data: this.resultados.map((r) => r.votos),
-          },
-        ],
-      };
-    },
     // actualizarConteo(tipoVoto) {
     //   const datosPorTipoDeVoto = {
     //     presidencia: [],
