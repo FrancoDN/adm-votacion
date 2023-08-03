@@ -17,7 +17,7 @@
     </p>
       <v-text-field v-model="user.email" class="mt-6" label="Ingrese el email" solo style="border-radius: 15rem;"></v-text-field>
       <v-text-field v-model="user.password" class="mt-4" label="Ingrese la contraseña" type="password" solo style="border-radius: 15rem;"></v-text-field>
-    <button @click="login" class="login mt-4">
+    <button @click="login" class="login mt-4" :disabled="authInProgress">
       <p style="font-size: 1.2rem; font-weight: 600; margin: 0.2rem;">Ingresar</p>
     </button>
   </div>
@@ -26,7 +26,6 @@
 <script>
 import firebase from "firebase";
 import "firebase/auth";
-import { isAdminUser } from '../router/guard'; // Importa el guard isAdminUser
 
 export default {
   name: "LoginCard",
@@ -36,10 +35,16 @@ export default {
       email: "",
       password: "",
     },
+    authInProgress: false,
   }),
 
   methods: {
    async login() {
+    if (this.authInProgress) {
+        return;
+      }
+
+      this.authInProgress = true;
       firebase
         .auth()
         .signInWithEmailAndPassword(this.user.email, this.user.password)
@@ -56,7 +61,7 @@ export default {
 
     async getUserInfo(uid) {
       try {
-        const snapshot = await firebase
+        await firebase
           .database()
           .ref("users/" + uid)
           .once("value")
@@ -64,7 +69,6 @@ export default {
             const userInfo = snapshot.val();
             // Hacer algo con la información obtenida, por ejemplo, redirigir a la página correspondiente
             if (userInfo) {
-              isAdminUser(userInfo.isAdmin)
               this.$emit("admin-status-changed", userInfo.isAdmin);
             } else {
               this.$router.push("/error");

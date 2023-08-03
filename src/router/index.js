@@ -30,7 +30,8 @@ const routes = [
     name: 'user',
     component: UserView,
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      hideNavbar: true,
     }
   },
   {
@@ -65,6 +66,7 @@ router.beforeEach(async (to, from, next) => {
   } else if (requiresAuth && currentUser) {
     try {
       const userInfo = await getUserInfo(currentUser.uid);
+      to.meta.hideNavbar = userInfo.isAdmin;
       console.log(userInfo);
       if (userInfo && userInfo.isAdmin) {
         // Si el usuario es un administrador (isAdmin: true), déjalo pasar a cualquier ruta.

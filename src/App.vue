@@ -1,16 +1,16 @@
 <template>
   <v-app>
-    <v-app-bar app color="#0197BA" dark v-if="showNavbar">
+    <v-app-bar app color="#0197BA" dark v-if="showNavbar && shouldShowSignOutButton && $route.meta.hideNavbar">
       <v-img src="./assets/vane.png" max-height="10rem" max-width="5rem" contain></v-img>
       <v-icon @click="toggleFullscreen" style="margin-left: 1.5rem;" size="30"> mdi-fullscreen</v-icon>
       <v-spacer></v-spacer>
-      <button @click="carga">
-        <p class="navBar" v-if="shouldShowCargaButton">CARGA</p>
+      <button @click="carga" :disabled="loadInProgress">
+        <p class="navBar" v-if="shouldShowCargaButton" >CARGA</p>
       </button>
-      <button @click="estadistica">
+      <button @click="estadistica" :disabled="loadInProgress">
         <p class="navBar" v-if="shouldShowEstadisticaButton">ESTADÍSTICAS</p>
       </button>
-      <button @click="quiniela">
+      <button @click="quiniela" :disabled="loadInProgress">
         <p class="navBar" v-if="shouldShowQuinielaButton">QUINIELA</p>
       </button>
       <v-btn v-if="shouldShowSignOutButton" color="#1BAED0" large @click="signOut"
@@ -18,7 +18,10 @@
         <p> Salir</p>
       </v-btn>
     </v-app-bar>
-
+    <v-btn v-if="!$route.meta.hideNavbar && shouldShowSignOutButton" color="#1BAED0" large @click="signOut"
+        style=" height: 2.5rem;">
+        <p> <b>Salir</b></p>
+      </v-btn>
     <v-main>
       <router-view />
     </v-main>
@@ -28,7 +31,7 @@
 <script>
 import firebase from "firebase";
 import "firebase/auth";
-
+import { mapState } from 'vuex';
 export default {
   name: "App",
 
@@ -58,7 +61,7 @@ export default {
     document.removeEventListener("MSFullscreenChange", this.handleFullscreenChange);
   },
   computed: {
-
+    ...mapState(['admin']),
     // Verifica si la ruta actual es la página de inicio de sesión ("/login" en este caso)
     shouldShowSignOutButton() {
       return this.$route.path !== "/";
@@ -67,10 +70,10 @@ export default {
       return this.$route.path !== "/user" && this.$route.path !== "/";
     },
     shouldShowEstadisticaButton() {
-      return this.$route.path !== "/admin" && this.adminNav;
+      return this.$route.path !== "/admin";
     },
     shouldShowQuinielaButton() {
-      return this.$route.path !== "/quiniela" && this.adminNav;
+      return this.$route.path !== "/quiniela";
     },
   },
 
@@ -111,6 +114,13 @@ export default {
       }
     },
 
+    loadProgress() {
+      if (this.authInProgress) {
+        return;
+      }
+
+      this.authInProgress = true;
+    },
     // Agregar el método para manejar el cambio de modo pantalla completa
     handleFullscreenChange() {
       this.showNavbar = !document.fullscreenElement;
@@ -118,14 +128,17 @@ export default {
 
     quiniela() {
       this.$router.push("/quiniela");
+      this.loadInProgress();
     },
 
     estadistica() {
       this.$router.push("/admin");
+      this.loadInProgress();
     },
 
     carga() {
       this.$router.push("/user");
+      this.loadInProgress();
     },
 
     signOut() {
