@@ -4,13 +4,13 @@
       <v-img src="./assets/vane.png" max-height="10rem" max-width="5rem" contain></v-img>
       <v-icon @click="toggleFullscreen" style="margin-left: 1.5rem;" size="30"> mdi-fullscreen</v-icon>
       <v-spacer></v-spacer>
-      <button @click="carga" :disabled="loadInProgress">
+      <button @click="carga">
         <p class="navBar" v-if="shouldShowCargaButton" >CARGA</p>
       </button>
-      <button @click="estadistica" :disabled="loadInProgress">
+      <button @click="estadistica">
         <p class="navBar" v-if="shouldShowEstadisticaButton">ESTADÍSTICAS</p>
       </button>
-      <button @click="quiniela" :disabled="loadInProgress">
+      <button @click="quiniela">
         <p class="navBar" v-if="shouldShowQuinielaButton">QUINIELA</p>
       </button>
       <v-btn v-if="shouldShowSignOutButton" color="#1BAED0" large @click="signOut"

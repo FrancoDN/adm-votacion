@@ -251,28 +251,16 @@ export default {
   // },
   computed: {
     primerosResultados() {
-      const ordenados = this.resultados
-        .slice()
-        .sort((a, b) => b.votos - a.votos);
-      return ordenados.slice(0, 2);
+      return this.ordenarResultados().slice(0, 2);
     },
     segundosResultados() {
-      const ordenados = this.resultados
-        .slice()
-        .sort((a, b) => b.votos - a.votos);
-      return ordenados.slice(2, 4);
+      return this.ordenarResultados().slice(2, 4);
     },
     tercerosResultados() {
-      const ordenados = this.resultados
-        .slice()
-        .sort((a, b) => b.votos - a.votos);
-      return ordenados.slice(4, 6);
+      return this.ordenarResultados().slice(4, 6);
     },
     cuartosResultados() {
-      const ordenados = this.resultados
-        .slice()
-        .sort((a, b) => b.votos - a.votos);
-      return ordenados.slice(6);
+      return this.ordenarResultados().slice(6);
     },
   },
   mounted() {
@@ -297,21 +285,22 @@ export default {
 
         // Ordenar el arreglo de candidatos por votos (puedes omitir esto si ya los tienes ordenados en Firebase)
         candidatos.sort((a, b) => b.votos - a.votos);
-
-        this.resultados = candidatos;
-
+        // Guardar los 9 candidatos con mayor cantidad de votos en "resultados"
+        this.resultados = candidatos.slice(0, 9);
+        // Calcular la suma de votos del resto de candidatos y agregar un objeto "Otros" en "chartData"
+        const otrosVotos = candidatos.slice(9).reduce((total, candidato) => total + candidato.votos, 0);
         this.chartData = {
-          labels: this.resultados.map((r) => r.partido),
+          labels: this.resultados.map((r) => r.partido).concat(["Otros"]),
           datasets: [
             {
               label: "Votos",
-              backgroundColor: this.resultados.map((r) => r.color),
-              data: this.resultados.map((r) => r.votos),
+              backgroundColor: this.resultados.map((r) => r.color).concat("#CCCCCC"),
+              data: this.resultados.map((r) => r.votos).concat(otrosVotos),
             },
           ],
         };
-         // Actualizar el valor de "sumaVotos" después de recorrer los datos para obtener el total
-      this.sumaVotos = this.resultados.reduce((total, candidato) => total + candidato.votos, 0);
+        // Actualizar el valor de "sumaVotos" después de recorrer los datos para obtener el total
+        this.sumaVotos = this.resultados.reduce((total, candidato) => total + candidato.votos, 0);
       }
     });
   },
@@ -339,7 +328,7 @@ export default {
     //   this.enBlanco = 1111; // Puedes ajustar este valor según tus necesidades.
     // },
     ordenarResultados() {
-      return this.resultados.sort((a, b) => b.votos - a.votos);
+      return this.resultados.slice().sort((a, b) => b.votos - a.votos);
     },
     showVotesOnRight(index) {
       return index % 2 === 1; // Retorna true para índices impares (columna derecha) y false para índices pares (columna izquierda)
