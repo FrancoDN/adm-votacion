@@ -266,25 +266,51 @@ export default {
   mounted() {
     // Recuperar los datos desde Firebase y asignarlos a "resultados"
     const db = firebase.database();
-    const ref = db.ref("partidos");
+    const ref = db.ref("provincial");
 
     ref.on("value", (snapshot) => {
       const data = snapshot.val();
       if (data) {
+        console.log(data);
         this.sumaVotos = 0;
         // Convertir el objeto obtenido de Firebase en un arreglo de candidatos
-        const candidatos = Object.keys(data).map((key) => {
-          const candidato = data[key].candidato;
-          const color = data[key].color;
-          const partido = data[key].nombre;
-          const votos = data[key].votos;
+        const candidatos = [];
+        Object.keys(data).forEach((keyAgrupacion) => {
+          const agrupacion = data[keyAgrupacion];
+          const candidato = agrupacion.candidatoIntendente; // Access the candidato directly
+          const color = agrupacion.color;
+          const partido = keyAgrupacion; // Aquí obtenemos el nombre de la lista (partido) en lugar de la keyLista
+          const votos = agrupacion.votos.intendente;
 
           this.sumaVotos = this.sumaVotos + votos;
-          return { partido, politico: candidato, color, votos: votos };
+          candidatos.push({ partido, politico: candidato, color, votos });
         });
+
+        console.log(candidatos);
+        // Agrupar los candidatos por partido y sumar sus votos
+        const candidatosAgrupados = {};
+        candidatos.forEach((candidato) => {
+          if (!candidatosAgrupados[candidato.partido]) {
+            candidatosAgrupados[candidato.partido] = {
+              partido: candidato.partido,
+              politico: candidato.politico,
+              color: candidato.color,
+              votos: candidato.votos,
+            };
+          } else {
+            candidatosAgrupados[candidato.partido].votos += candidato.votos;
+          }
+        });
+
+        // Convertir los datos agrupados nuevamente en un arreglo
+        const candidatosFinales = Object.values(candidatosAgrupados);
+
+        // Ordenar el arreglo de candidatos por votos (puedes omitir esto si ya los tienes ordenados en Firebase)
+        candidatosFinales.sort((a, b) => b.votos - a.votos);
 
         // Ordenar el arreglo de candidatos por votos (puedes omitir esto si ya los tienes ordenados en Firebase)
         candidatos.sort((a, b) => b.votos - a.votos);
+
         // Guardar los 9 candidatos con mayor cantidad de votos en "resultados"
         this.resultados = candidatos.slice(0, 9);
         // Calcular la suma de votos del resto de candidatos y agregar un objeto "Otros" en "chartData"
