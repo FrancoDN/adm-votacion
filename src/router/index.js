@@ -4,6 +4,7 @@ import LoginView from '../views/LoginView.vue'
 import AdminView from '../views/AdminView.vue'
 import UserView from '../views/UserView.vue'
 import QuinielaView from '../views/QuinielaView.vue'
+import TelegramaView from '../views/TelegramaView.vue'
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
@@ -41,6 +42,15 @@ const routes = [
     meta: {
       requiresAuth: true,
       isAdminRoute: true
+    }
+  },
+  {
+    path: '/telegrama',
+    name: 'telegrama',
+    component: TelegramaView,
+    meta: {
+      requiresAuth: true,
+      hideNavbar: true,
     }
   },
   // {
