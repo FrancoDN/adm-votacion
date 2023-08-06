@@ -219,7 +219,7 @@ export default {
       sumaVotos: 0,
       chartDataState: true,
       chartData: {
-        labels: ["Confirmados", "Pendientes"],
+        labels: [],
         datasets: [
           {
             label: "Votos",

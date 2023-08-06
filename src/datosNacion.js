@@ -82,7 +82,7 @@ export const filas =[
     {
       "numero": 94,
       "agrupacion": "PROYECTO JOVEN",
-      "lista": "COALIC. PAZ DEMOC. Y SOBERANIA",
+      "lista": "COALIC PAZ DEMOC Y SOBERANIA",
       "presidente": "",
       "parlamentoNacional": "",
       "senadoresNacionales": "",
@@ -141,7 +141,7 @@ export const filas =[
     },
     {
       "numero": 131,
-      "agrupacion": "FRENTE LIBER. AR",
+      "agrupacion": "FRENTE LIBER AR",
       "lista": "LISTA A DEMOS",
       "presidente": "",
       "parlamentoNacional": "NO USAR",
@@ -151,7 +151,7 @@ export const filas =[
     },
     {
       "numero": 131,
-      "agrupacion": "FRENTE LIBER. AR",
+      "agrupacion": "FRENTE LIBER AR",
       "lista": "LISTA B RECONQUISTA",
       "presidente": "",
       "parlamentoNacional": "NO USAR",
@@ -161,7 +161,7 @@ export const filas =[
     },
     {
       "numero": 131,
-      "agrupacion": "FRENTE LIBER. AR",
+      "agrupacion": "FRENTE LIBER AR",
       "lista": "LISTA C ANTICORRUPCION",
       "presidente": "",
       "parlamentoNacional": "NO USAR",
@@ -231,7 +231,7 @@ export const filas =[
     },
     {
       "numero": 136,
-      "agrupacion": "FTE. DE IZQUIERDA Y DE TRABAJ-UNIDAD",
+      "agrupacion": "FTE DE IZQUIERDA Y DE TRABAJ-UNIDAD",
       "lista": "LISTA A UNIR Y FORTALECER LA IZQUIERDA",
       "presidente": "",
       "parlamentoNacional": "",
@@ -241,8 +241,8 @@ export const filas =[
     },
     {
       "numero": 136,
-      "agrupacion": "FTE. DE IZQUIERDA Y DE TRABAJ-UNIDAD",
-      "lista": "L.B.UNIDAD DE LUCHADORES Y LA IZQUIERDA",
+      "agrupacion": "FTE DE IZQUIERDA Y DE TRABAJ-UNIDAD",
+      "lista": "LBUNIDAD DE LUCHADORES Y LA IZQUIERDA",
       "presidente": "",
       "parlamentoNacional": "",
       "senadoresNacionales": "",
@@ -281,7 +281,7 @@ export const filas =[
     },
     {
       "numero": 191,
-      "agrupacion": "POLITICA ABIERTA PARA INTEG. SOCIAL-PAIS",
+      "agrupacion": "POLITICA ABIERTA PARA INTEG SOCIAL-PAIS",
       "lista": "LISTA AZUL UNICA",
       "presidente": "NO USAR",
       "parlamentoNacional": "NO USAR",
@@ -291,7 +291,7 @@ export const filas =[
     },
     {
       "numero": 258,
-      "agrupacion": "CO.PE.BO.",
+      "agrupacion": "COPEBO",
       "lista": "CORRIENTE DE PENSAMIENTO AUTENTICA",
       "presidente": "NO USAR",
       "parlamentoNacional": "NO USAR",
@@ -321,7 +321,7 @@ export const filas =[
     },
     {
       "numero": 304,
-      "agrupacion": "FTE.FED. DE ACCION SOLID. PCIA BS AS",
+      "agrupacion": "FTEFED DE ACCION SOLID PCIA BS AS",
       "lista": "ACCION Y SOLIDARIDAD",
       "presidente": "NO USAR",
       "parlamentoNacional": "NO USAR",
@@ -331,7 +331,7 @@ export const filas =[
     },
     {
       "numero": 304,
-      "agrupacion": "FTE.FED. DE ACCION SOLID. PCIA BS AS",
+      "agrupacion": "FTEFED DE ACCION SOLID PCIA BS AS",
       "lista": "SERVIR",
       "presidente": "NO USAR",
       "parlamentoNacional": "NO USAR",
@@ -341,7 +341,7 @@ export const filas =[
     },
     {
       "numero": 304,
-      "agrupacion": "FTE.FED. DE ACCION SOLID. PCIA BS AS",
+      "agrupacion": "FTEFED DE ACCION SOLID PCIA BS AS",
       "lista": "SOLIDARIOS",
       "presidente": "NO USAR",
       "parlamentoNacional": "NO USAR",
@@ -351,7 +351,7 @@ export const filas =[
     },
     {
       "numero": 309,
-      "agrupacion": "MOV. DE ORGANIZACION DEMOCRATICA-MODE",
+      "agrupacion": "MOV DE ORGANIZACION DEMOCRATICA-MODE",
       "lista": "LISTA A UNIDAD",
       "presidente": "NO USAR",
       "parlamentoNacional": "NO USAR",
@@ -432,7 +432,7 @@ export const filas =[
     {
       "numero": 323,
       "agrupacion": "JUSTICIA Y DIGNIDAD PATRIOTICA",
-      "lista": "P.A.S.E.",
+      "lista": "PASE",
       "presidente": "NO USAR",
       "parlamentoNacional": "NO USAR",
       "senadoresNacionales": "",

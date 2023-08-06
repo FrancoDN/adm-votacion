@@ -38,14 +38,14 @@ export default {
         },
         alternarComponente() {
             this.mostrarComponenteProvincia = !this.mostrarComponenteProvincia;
-            this.enviar();
 
-            // if (this.mostrarComponenteProvincia) {
-            // }
+            if (this.mostrarComponenteProvincia) {
+                this.enviarProvincia();
+                this.enviarNacional();
+
+            }
         },
-        enviar() {
-            // ... (código existente)
-
+        enviarProvincia() {
             const dbRef = firebase.database().ref('provincial');
 
             // Consultar la base de datos para verificar si la lista ya existe
@@ -128,6 +128,84 @@ export default {
                 });
         },
 
+        enviarNacional() {
+            const dbRef = firebase.database().ref('nacional');
+
+            // Consultar la base de datos para verificar si la lista ya existe
+            dbRef.once('value')
+                .then((snapshot) => {
+                    const data = snapshot.val();
+                    let existenDatos = false;
+
+                    // Verificar si la lista ya existe en la base de datos
+                    if (data) {
+                        // Recorrer las claves del objeto datosAgrupadosNacion para obtener el nombre de la agrupación
+                        Object.keys(this.datosAgrupadosNacion).forEach((nombreAgrupacion) => {
+                            const agrupacionActual = this.datosAgrupadosNacion[nombreAgrupacion];
+                            Object.keys(agrupacionActual).forEach((keyLista) => {
+                                const lista = agrupacionActual[keyLista];
+                                console.log(lista);
+                            const votosPresidente = agrupacionActual ? parseInt(lista.votos.presidente) || 0 : 0;
+
+                            if (!data[keyLista]) {
+                                data[keyLista] = {
+                                    presidente: votosPresidente,
+                                };
+                            } else {
+                                data[keyLista].presidente += votosPresidente;
+                            }
+
+                            existenDatos = true; // Marcamos que existen datos para evitar el envío duplicado
+                        });
+                    });
+
+                        // Actualizar/subir los datos en Firebase
+                        if (existenDatos) {
+                            dbRef.set(data)
+                                .then(() => {
+                                    console.log('Datos actualizados/enviados a Firebase correctamente.');
+                                })
+                                .catch((error) => {
+                                    console.error('Error al actualizar/enviar los datos a Firebase:', error);
+                                });
+                        } else {
+                            console.log('No hay nuevos datos para enviar a Firebase.');
+                        }
+                    } else {
+                        // Si data es null, significa que el objeto "nacional" no existe en Firebase
+                        // Por lo tanto, puedes crearlo con los datos iniciales.
+                        const newData = {};
+
+                        // Recorrer las claves del objeto datosAgrupadosNacion para obtener el nombre de la agrupación
+                        Object.keys(this.datosAgrupadosNacion).forEach((nombreAgrupacion) => {
+                            const agrupacionActual = this.datosAgrupadosNacion[nombreAgrupacion];
+                            const votosPresidente = agrupacionActual ? parseInt(agrupacionActual.votos.presidente) || 0 : 0;
+
+                            newData[nombreAgrupacion] = {
+                                presidente: votosPresidente,
+                            };
+
+                            existenDatos = true; // Marcamos que existen datos para evitar el envío duplicado
+                        });
+
+                        // Actualizar/subir los datos en Firebase
+                        if (existenDatos) {
+                            dbRef.set(newData)
+                                .then(() => {
+                                    console.log('Datos actualizados/enviados a Firebase correctamente.');
+                                })
+                                .catch((error) => {
+                                    console.error('Error al actualizar/enviar los datos a Firebase:', error);
+                                });
+                        } else {
+                            console.log('No hay datos para enviar a Firebase.');
+                        }
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error al consultar los datos en Firebase:', error);
+                });
+        },
 
 
     },
