@@ -1,19 +1,12 @@
 <template>
-  <div
-    class="botonera"
-    style="width: 60%; margin-top: 1.5rem; margin-bottom: 1.5rem"
-  >
+  <div class="botonera" style="width: 60%; margin-top: 1.5rem; margin-bottom: 1.5rem">
     <button @click="createPDF" class="individual" v-if="selectedPersonName">
       <p style="color: white; font-weight: 700">
         Descargar avales individuales
       </p>
     </button>
     <br />
-    <button
-      @click="generatePDFForAll"
-      class="generales"
-      style="margin-left: 2rem"
-    >
+    <button @click="generatePDFForAll" class="generales" style="margin-left: 2rem">
       <p style="color: white; font-weight: 700">Descargar avales generales</p>
     </button>
   </div>
@@ -27,6 +20,11 @@ export default {
     selectedPersonName: String,
     avales: Object,
     numeroDeAvales: Array,
+  },
+  data() {
+    return {
+      selectedPerson: null,
+    }
   },
   watch: {
     // Se ejecutará cuando cambie la prop "selectedPersonName"
@@ -46,35 +44,31 @@ export default {
   },
   methods: {
     getAvalesFaltantes() {
-      if (this.selectedPersonName && this.avales && this.numeroDeAvales) {
-        // Obtener el objeto de la persona seleccionada en base al nombre
-        const selectedPerson = this.numeroDeAvales.find(
-          (person) => person.name === this.selectedPersonName
+      // Obtener la persona seleccionada en base al nombre
+      const selectedPerson = this.numeroDeAvales.find(
+        (person) => person.name === this.selectedPersonName
+      );
+      this.selectedPerson = selectedPerson;
+      if (selectedPerson) {
+        // Obtener los avales totales de la persona seleccionada
+        const avalesTotales = selectedPerson.avales || [];
+
+        // Filtrar los avales cargados de la persona seleccionada
+        const avalesCargados = Object.values(this.avales)
+          .map((aval) => aval.avalNumero);
+
+        // Encontrar los avales faltantes que están en avalesTotales pero no en avalesCargados
+        const avalesFaltantes = avalesTotales.filter(
+          (aval) => !avalesCargados.includes(aval.orden)
         );
-
-        if (selectedPerson) {
-          // Obtener los avales totales de la persona seleccionada
-          const avalesTotales = selectedPerson.avales || [];
-
-          // Filtrar los avales cargados de la persona seleccionada
-          const avalesCargados = Object.values(this.avales)
-            .filter((aval) => aval.persona === this.selectedPersonName)
-            .map((aval) => aval.avalNumero);
-
-          // Encontrar los avales faltantes que están en avalesTotales pero no en avalesCargados
-          const avalesFaltantes = avalesTotales.filter(
-            (aval) => !avalesCargados.includes(aval)
-          );
-
-          return avalesFaltantes;
-        } else {
-          console.log(
-            "La persona seleccionada no existe en el objeto numeroDeAvales."
-          );
-          return [];
-        }
+        console.log(avalesFaltantes);
+        return avalesFaltantes;
+      } else {
+        console.log("La persona seleccionada no existe en el objeto numeroDeAvales.");
+        return [];
       }
     },
+
 
     createPDF() {
       const avalesFaltantes = this.getAvalesFaltantes();
@@ -117,22 +111,36 @@ export default {
           [
             {
               content: "Nro de Orden",
-              styles: { fillColor: [200, 200, 200], fontStyle: "bold" },
+              styles: { fillColor: [100, 100, 100], fontStyle: "bold" },
             },
             {
-              content: "DNI",
-              styles: { fillColor: [200, 200, 200], fontStyle: "bold" },
+              content: "Nombre",
+              styles: { fillColor: [100, 100, 100], fontStyle: "bold" },
             },
             {
               content: "Telefono",
-              styles: { fillColor: [200, 200, 200], fontStyle: "bold" },
+              styles: { fillColor: [100, 100, 100], fontStyle: "bold" },
+            },
+            {
+              content: "Domicilio",
+              styles: { fillColor: [100, 100, 100], fontStyle: "bold" },
             },
           ],
         ];
 
         const tableData = [];
         avalesFaltantes.forEach((aval) => {
-          tableData.push([aval, 12345678, 2216259498]);
+          // Obtener los datos de la persona en base al número de orden
+          const persona = this.selectedPerson.avales.find(
+            (avalesPersona) => avalesPersona.orden === aval.orden
+          );
+          // Agregar los datos de la persona al PDF
+          tableData.push([
+            aval.orden,
+            persona.nombre,
+            persona.celular,
+            persona.domicilio,
+          ]);
         });
 
         doc.autoTable({
@@ -169,10 +177,9 @@ export default {
           const selectedPersonName = person.name;
           const avalesTotales = person.avales || [];
           const avalesCargados = Object.values(this.avales)
-            .filter((aval) => aval.persona === selectedPersonName)
             .map((aval) => aval.avalNumero);
           const avalesFaltantes = avalesTotales.filter(
-            (aval) => !avalesCargados.includes(aval)
+            (aval) => !avalesCargados.includes(aval.orden)
           );
 
           if (avalesFaltantes.length > 0) {
@@ -201,28 +208,37 @@ export default {
 
             doc.setDrawColor(0, 0, 0); // Color de la línea
             doc.line(20, startY + 22, 190, startY + 25); // Línea debajo del título
+
             // Encabezado con las columnas adicionales
             const tableHeaders = [
               [
                 {
                   content: "Nro de Orden",
-                  styles: { fillColor: [200, 200, 200], fontStyle: "bold" },
+                  styles: { fillColor: [100, 100, 100], fontStyle: "bold" },
                 },
                 {
-                  content: "DNI",
-                  styles: { fillColor: [200, 200, 200], fontStyle: "bold" },
+                  content: "Nombre",
+                  styles: { fillColor: [100, 100, 100], fontStyle: "bold" },
                 },
                 {
                   content: "Telefono",
-                  styles: { fillColor: [200, 200, 200], fontStyle: "bold" },
+                  styles: { fillColor: [100, 100, 100], fontStyle: "bold" },
+                },
+                {
+                  content: "Domicilio",
+                  styles: { fillColor: [100, 100, 100], fontStyle: "bold" },
                 },
               ],
             ];
 
             const tableData = [];
             avalesFaltantes.forEach((aval) => {
-              // Solo agregamos el aval, DNI y Telefono en las filas
-              tableData.push([aval, 12345678, 2216259498]);
+              // Obtener los datos de la persona en base al número de orden
+              const persona = person.avales.find(
+                (avalesPersona) => avalesPersona.orden === aval.orden
+              );
+              // Agregar los datos de la persona al PDF
+              tableData.push([aval.orden, persona.nombre, persona.celular, persona.domicilio]);
             });
 
             doc.autoTable({
@@ -235,7 +251,7 @@ export default {
           }
         });
 
-        if (startY === 20) {
+        if (startY === 15) {
           console.log("No hay avales faltantes para mostrar en el PDF.");
         } else {
           // Mostrar el PDF en una nueva ventana del navegador
@@ -248,6 +264,7 @@ export default {
         console.log("No hay datos para generar el PDF.");
       }
     },
+
   },
 };
 </script>
@@ -259,6 +276,7 @@ export default {
   justify-content: center;
   align-items: center;
 }
+
 .generales,
 .individual {
   display: flex;

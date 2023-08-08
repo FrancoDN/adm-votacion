@@ -37,8 +37,8 @@
         ></v-progress-linear>
         <p class="percent">
           {{
-            (getAvalesConfirmados(selectedPerson) * 100) /
-            selectedPerson.avales.length
+            ((getAvalesConfirmados(selectedPerson) * 100) /
+            selectedPerson.avales.length).toFixed(2)
           }}%
         </p>
       </div>
@@ -91,20 +91,21 @@ mounted() {
     agruparAvalesCargados(data) {
       const personasAval = {};
 
-      // Agrupo los avales por el campo "persona"
+      // Agrupo los avales por el campo "nombreApoderado"
       Object.values(data).forEach((aval) => {
-        const persona = aval.persona;
-        if (persona && !personasAval[persona]) {
-          personasAval[persona] = [aval];
-        } else if (persona && personasAval[persona]) {
-          personasAval[persona].push(aval);
+        console.log(aval);
+        const nombreApoderado = aval.nombreApoderado;
+        if (nombreApoderado && !personasAval[nombreApoderado]) {
+          personasAval[nombreApoderado] = [aval];
+        } else if (nombreApoderado && personasAval[nombreApoderado]) {
+          personasAval[nombreApoderado].push(aval);
         }
       });
 
       // Creo una lista de objetos con las personas y sus avales
-      this.peopleWithAvals = Object.keys(personasAval).map((persona) => ({
-        name: persona,
-        avales: personasAval[persona],
+      this.peopleWithAvals = Object.keys(personasAval).map((nombreApoderado) => ({
+        name: nombreApoderado,
+        avales: personasAval[nombreApoderado],
       }));
     },
 
