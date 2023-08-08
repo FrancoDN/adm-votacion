@@ -7,7 +7,7 @@
                     <th colspan="3">SECCION ELECTORAL: 12 - BERISSO</th>
                 </tr>
                 <tr class="cabecera">
-                    <th colspan="8">MESA: 0</th>
+                    <th colspan="8">MESA: {{ numeroMesa }}</th>
                 </tr>
             </thead>
 
@@ -200,6 +200,7 @@ export default {
     data() {
 
         return {
+            numeroMesa: 0,
             filas: filas.map((fila) => ({
                 ...fila,
                 votos: {
@@ -288,7 +289,10 @@ export default {
         },
         
     },
-
+    mounted(){
+        this.numeroMesa = localStorage.getItem("mesaNumero");
+        console.log(this.numeroMesa);
+    },
 
     methods: {
         totalFilasColumna(columna) {
@@ -395,8 +399,8 @@ export default {
             // Aquí tienes el objeto datosAgrupadosNacion con los datos agrupados por agrupación política y lista interna
             // Puedes hacer lo que desees con este objeto, por ejemplo, enviarlo a un servidor o guardar los datos localmente
             this.$emit("datos-agrupados-nacion", datosAgrupadosNacion);
-            
             this.$emit("enviar");
+            localStorage.removeItem("mesaNumero");
         },
     },
 

@@ -7,7 +7,7 @@
                     <th colspan="3">SECCION ELECTORAL: 12 - BERISSO</th>
                 </tr>
                 <tr class="cabecera">
-                    <th colspan="8">MESA: 0</th>
+                    <th colspan="8">MESA: {{ numeroMesa }}</th>
                 </tr>
             </thead>
 
@@ -154,6 +154,7 @@ export default {
     data() {
 
         return {
+            numeroMesa: "",
             filas: filas.map((fila) => ({
                 ...fila,
                 votos: {
@@ -193,6 +194,10 @@ export default {
                 intendente: 0,
             },
         };
+    },
+    mounted() {
+        this.numeroMesa = localStorage.getItem("mesaNumero");
+        console.log(this.numeroMesa);
     },
     computed: {
         totalVotosAgrupaciones() {

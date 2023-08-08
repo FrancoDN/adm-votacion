@@ -42,7 +42,7 @@ export default {
             if (this.mostrarComponenteProvincia) {
                 this.enviarProvincia();
                 this.enviarNacional();
-
+                this.$router.push('/user');
             }
         },
         enviarProvincia() {

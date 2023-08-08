@@ -1,11 +1,15 @@
 <template>
-  <div style="width: 100%; height: 90%; ">
+  <div style="width: 100%; height: 100%; ">
     <div class="centro">
-      <p style="font-size: 2.7vw; font-family: Open Sans; margin-bottom: -1.3vw;">TOTAL</p>
+      
+      <p style="font-size: 2.7vw; font-family: Open Sans; margin-bottom: -1vw; ;">TOTAL</p>
       <p style="font-size: 2.7vw; font-family: Russo One; color: #1BAED0; margin-bottom: -1vw;">{{ sumaVotos |
         formatThousands }}</p>
-      <p style="font-size: 1.2vw; font-family: Open Sans;">VOTOS</p>
+      <p style="font-size: 1.2vw; font-family: Open Sans; ">VOTOS</p>
+        
     </div>
+    <modal-descargas class="modal" :dataPartidos="data"></modal-descargas>
+
     <div class="chart-container" v-if="chartDataState">
       <Doughnut ref="doughnut" :data="chartData" :options="chartOptions" />
     </div>
@@ -194,6 +198,7 @@
   </div>
 </template>
 <script>
+import ModalDescargas from './ModalDescargas.vue';
 import 'chart.js/auto';
 import { Doughnut } from "vue-chartjs";
 import firebase from "firebase/app";
@@ -201,13 +206,9 @@ import "firebase/database";
 export default {
   components: {
     Doughnut,
+    ModalDescargas,
   },
-  props: {
-    tipoVoto: {
-      type: String,
-      required: true,
-    },
-  },
+
   filters: {
     formatThousands(value) {
       if (!value) return '';
@@ -216,6 +217,7 @@ export default {
   },
   data() {
     return {
+      data: {},
       sumaVotos: 0,
       chartDataState: true,
       chartData: {
@@ -240,15 +242,7 @@ export default {
     };
   },
 
-  // watch: {
-  //   tipoVoto(newTipoVoto) {
-  //     this.actualizarConteo(newTipoVoto);
-  //   },
-  // },
-  // mounted() {
-  //   // Llamar al método para inicializar el conteo con los datos de Intendencia al cargar la página.
-  //   this.actualizarConteo("intendencia");
-  // },
+ 
   computed: {
     primerosResultados() {
       return this.ordenarResultados().slice(0, 2);
@@ -271,7 +265,7 @@ export default {
     ref.on("value", (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        console.log(data);
+        this.data = data;
         this.sumaVotos = 0;
         // Convertir el objeto obtenido de Firebase en un arreglo de candidatos
         const candidatos = [];
@@ -369,6 +363,13 @@ export default {
 </script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,400;0,500;0,600;0,700;0,800;0,900;0,1000;1,300&family=Open+Sans:wght@800&family=Russo+One&display=swap');
+.modal {
+  position: absolute;
+  top: 71.2%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
 
 .centro {
   display: flex;
@@ -379,9 +380,9 @@ export default {
   position: absolute;
   background-color: white;
   border-radius: 100vw;
-  width: 15vw;
-  height: 15vw;
-  top: 44%;
+  width: 18vw;
+  height: 18vw;
+  top: 35%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
@@ -390,8 +391,8 @@ export default {
 .chart-container {
   position: absolute;
   width: 100%;
-  height: 28vw;
-  top: 44%;
+  height: 31vw;
+  top: 35%;
   left: 50%;
   transform: translate(-50%, -50%);
 }

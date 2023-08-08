@@ -1,6 +1,5 @@
 <template>
-  <div
-    style="
+  <div style="
       background-color: #0197ba;
       width: 100%;
       height: 100%;
@@ -8,77 +7,44 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-    "
-  >
+    ">
     <img src="../assets/vane.png" alt="" style="width: 30rem" />
     <p class="card-title">Carga de votos</p>
 
     <div class="buttonDuo">
-      <button
-        :style="[buttonQ, buttonTransition]"
-        @click="changeType(false)"
-        class="d-flex justify-center ma-2"
-      >
+      <button :style="[buttonQ, buttonTransition]" @click="changeType(false)" class="d-flex justify-center ma-2">
         <p style="color: black; font-size: 1.2rem; font-weight: 600">
           Quiniela
         </p>
       </button>
-      <button
-        :style="[buttonT, buttonTransition]"
-        @click="changeType(true)"
-        class="d-flex justify-center ma-2"
-      >
+      <button :style="[buttonT, buttonTransition]" @click="changeType(true)" class="d-flex justify-center ma-2">
         <p style="color: black; font-size: 1.2rem; font-weight: 600">
           Telegrema
         </p>
       </button>
     </div>
     <div style="display: flex; flex-direction: column; justify-content: center">
-      <p
-        style="
+      <p style="
           color: white;
           font-size: 1.5rem;
           font-weight: 600;
           text-align: center;
           margin-top: 1.2rem;
-        "
-      >
+        ">
         {{ inputText }}
       </p>
       <div class="pildora">
-        <v-text-field
-          ref="textField"
-          @keyup.enter="handleEnterKeyPress"
-          v-model="inputValue"
-          type="number"
-          hide-details="true"
-          inputmode="numeric"
-        ></v-text-field>
+        <v-text-field ref="textField" @keyup.enter="handleEnterKeyPress" v-model="inputValue" type="number"
+          hide-details="true" inputmode="numeric"></v-text-field>
 
-        <button
-          class="botonCarga"
-          ref="subirTelegramaButton"
-          @click="subirTelegrama()"
-          v-if="uploadType"
-        >
-          <p
-            style="color: white; font-size: 1.2rem; font-weight: 600"
-            class="d-flex ma-1 justify-center"
-          >
+        <button class="botonCarga" ref="subirTelegramaButton" @click="subirTelegrama()" v-if="uploadType">
+          <p style="color: white; font-size: 1.2rem; font-weight: 600" class="d-flex ma-1 justify-center">
             Cargar
           </p>
         </button>
 
-        <button
-          class="botonCarga"
-          ref="subirQuinielaButton"
-          @click="subirQuiniela()"
-          v-else
-        >
-          <p
-            style="color: white; font-size: 1.2rem; font-weight: 600"
-            class="d-flex ma-1 justify-center"
-          >
+        <button class="botonCarga" ref="subirQuinielaButton" @click="subirQuiniela()" v-else>
+          <p style="color: white; font-size: 1.2rem; font-weight: 600" class="d-flex ma-1 justify-center">
             Cargar
           </p>
         </button>
@@ -86,13 +52,7 @@
     </div>
 
     <transition name="fade">
-      <v-alert
-        v-if="showAlert"
-        border="left"
-        prominent
-        :type="alertType"
-        class="mt-6"
-      >
+      <v-alert v-if="showAlert" border="left" prominent :type="alertType" class="mt-6">
         <template v-slot:default>
           <span v-html="alertMessage"></span>
         </template>
@@ -132,7 +92,7 @@ export default {
       type: "Telegrama",
       booleanType: true,
       uploadType: true,
-      inputText: "Ingrese el número de telegrama",
+      inputText: "Ingrese el número de mesa",
       inputValue: "",
     };
   },
@@ -160,7 +120,29 @@ export default {
     },
 
     subirTelegrama() {
-      console.log("subo telegrama");
+      const mesaNumero = parseInt(this.inputValue, 10);
+      if (isNaN(mesaNumero)) {
+        this.alertType = "warning";
+        this.alertMessage = "Ingrese un número de mesa válido.";
+        this.showAlert = true;
+        setTimeout(() => {
+          this.showAlert = false;
+        }, 3500);
+        return;
+      }
+
+      localStorage.setItem("mesaNumero", mesaNumero);
+      if (localStorage.getItem("mesaNumero")) {
+        this.alertType = "success";
+        this.alertMessage = `Mesa <b>${mesaNumero}</b> cargada exitosamente`;
+        this.showAlert = true;
+        this.inputValue = ""; // Limpiar el campo de entrada después de cargar el aval
+      }
+      setTimeout(() => {
+        this.showAlert = false;
+        this.$router.push({name: 'telegrama'});
+
+      }, 3500);
     },
 
     async subirQuiniela() {
@@ -258,14 +240,14 @@ export default {
     },
 
     handleEnterKeyPress() {
-    if (this.uploadType) {
-      // Si el tipo de carga es telegrama, hacer clic en el botón de carga de telegrama
-      this.$refs.subirTelegramaButton.click();
-    } else {
-      // Si el tipo de carga es quiniela, hacer clic en el botón de carga de quiniela
-      this.$refs.subirQuinielaButton.click();
-    }
-  },
+      if (this.uploadType) {
+        // Si el tipo de carga es telegrama, hacer clic en el botón de carga de telegrama
+        this.$refs.subirTelegramaButton.click();
+      } else {
+        // Si el tipo de carga es quiniela, hacer clic en el botón de carga de quiniela
+        this.$refs.subirQuinielaButton.click();
+      }
+    },
   },
 };
 </script>
@@ -286,6 +268,7 @@ export default {
   width: 18rem;
   flex-direction: row;
 }
+
 .botonCarga {
   border-radius: 20rem;
   background-color: #8a8f90;
@@ -308,6 +291,7 @@ export default {
 .button-transition {
   transition: background-color 2s, color 2s;
 }
+
 .buttonDuo {
   display: flex;
   justify-content: center;
@@ -319,9 +303,15 @@ export default {
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.5s; /* Duración de la animación (0.5 segundos) */
+  transition: opacity 0.5s;
+  /* Duración de la animación (0.5 segundos) */
 }
-.fade-enter, .fade-leave-to /* .fade-leave-active en <2.1.8 */ {
+
+.fade-enter,
+.fade-leave-to
+
+/* .fade-leave-active en <2.1.8 */
+  {
   opacity: 0;
 }
 

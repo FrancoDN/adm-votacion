@@ -1,35 +1,34 @@
 <template>
   <div style="height: 100%; background-color: black;">
-    <admin-botonera
+    <!-- <admin-botonera
       :tipoVoto="tipoVoto"
       @cambiar-voto="cambiarVoto"
       style="height: 10%;"
-    ></admin-botonera>
+    ></admin-botonera> -->
     
       <admin-conteo
-        :tipoVoto="tipoVoto"
       ></admin-conteo>
   </div>
 </template>
 
 <script>
 import AdminConteo from "@/components/AdminConteo.vue";
-import AdminBotonera from "@/components/AdminBotonera.vue";
+// import AdminBotonera from "@/components/AdminBotonera.vue";
 export default {
   components: {
     AdminConteo,
     // AdminEstadistica,
-    AdminBotonera,
+    // AdminBotonera,
   },
   data() {
     return {
-      tipoVoto: "intendencia",
+      // tipoVoto: "intendencia",
     };
   },
   methods: {
-    cambiarVoto(tipo) {
-      this.tipoVoto = tipo; // Actualizamos el tipo de voto en el componente padre
-    },
+    // cambiarVoto(tipo) {
+    //   this.tipoVoto = tipo; // Actualizamos el tipo de voto en el componente padre
+    // },
   },
 };
 </script>
@@ -39,5 +38,8 @@ p {
   font-family: Nunito;
   margin: 0;
 }
+body {
+  overflow: hidden;
 
+}
 </style>
