@@ -140,7 +140,7 @@ export default {
       }
       setTimeout(() => {
         this.showAlert = false;
-        this.$router.push({name: 'telegrama'});
+        this.$router.push({ name: 'telegrama' });
 
       }, 3500);
     },
@@ -164,19 +164,11 @@ export default {
       const avalesCargados = snapshotAvalCargados.val();
 
       if (avalesCargados) {
-        // Verificar que avalesCargados no sea undefined
-        if (
-          Object.values(avalesCargados).some(
-            (avalCargado) => avalCargado.avalNumero === avalNumero
-          )
-        ) {
-          // Si el aval ya existe en avalesCargados, mostrar una alerta y no continuar
+        if (Object.values(avalesCargados).some(avalCargado => avalCargado.avalNumero === avalNumero)) {
           this.alertType = "error";
           this.alertMessage = `El aval ${avalNumero} ya fue cargado previamente.`;
           this.showAlert = true;
-          this.inputValue = ""; // Limpiar el campo de entrada después de mostrar la alerta
-
-          // Configurar el temporizador para ocultar el v-alert después de 3 segundos
+          this.inputValue = "";
           setTimeout(() => {
             this.showAlert = false;
           }, 3500);
@@ -185,59 +177,95 @@ export default {
       }
 
       const snapshot = await firebase.database().ref("avales").once("value");
-      const personasAval = snapshot.val();
+      const avalesData = snapshot.val();
 
-      if (personasAval) {
-        // Verificar que personasAval no sea undefined
-        let persona;
-        Object.keys(personasAval).forEach((key) => {
-          const avales = personasAval[key]?.avales;
-          if (avales && avales.includes(avalNumero)) {
-            persona = personasAval[key].name;
+      let personaEncontrada = null;
+
+      for (const apoderadoKey in avalesData) {
+        const apoderado = avalesData[apoderadoKey];
+        const avalesPersona = apoderado.avales;
+
+        if (avalesPersona) {
+          for (const aval of avalesPersona) {
+            if (aval.orden === avalNumero) {
+              personaEncontrada = {
+                nombrePersona: aval.nombre,
+                nombreApoderado: apoderado.name,
+                telefonoPersona: aval.celular,
+                domicilioPersona: aval.domicilio,
+              };
+              break;
+            }
+          }
+        }
+
+        if (personaEncontrada) {
+          break;
+        }
+      }
+
+      if (personaEncontrada) {
+        const nuevoAval = {
+          avalNumero: avalNumero,
+          fechaCarga: new Date().toISOString(),
+          nombreApoderado: personaEncontrada.nombreApoderado,
+          persona: {
+            nombre: personaEncontrada.nombrePersona,
+            celular: personaEncontrada.telefonoPersona,
+            domicilio: personaEncontrada.domicilioPersona,
+          },
+        };
+
+        this.$swal({
+          title: '<p>Confirmar aval</p>',
+          html: `<p>¿Estás seguro de que el número de orden: <b>${avalNumero}</b> es correcto?</p>`,
+          type: 'question',
+          showCancelButton: true,
+          cancelButtonText: '<p>Cancelar</p>',
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: '<p>Confirmar</p>',
+        }).then(result => {
+          if (result.value) {
+            firebase
+              .database()
+              .ref("avalesCargados")
+              .push(nuevoAval)
+              .then(() => {
+                const Toast = this.$swal.mixin({
+                  toast: true,
+                  position: 'bottom-end',
+                  showConfirmButton: false,
+                  timer: 5500,
+                  timerProgressBar: true,
+                  didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', this.$swal.stopTimer)
+                        toast.addEventListener('mouseleave', this.$swal.resumeTimer)
+                        this.inputValue = ""; // Limpiar el campo de entrada después de cargar el aval
+
+                      }
+                    });
+
+                Toast.fire({
+                  icon: 'success',
+                  html: `<p>Aval <b>${avalNumero}</b> cargado exitosamente a nombre de <b>${personaEncontrada.nombrePersona}</b>. <br>Apoderado: <b>${personaEncontrada.nombreApoderado}</b></p>`,
+                });
+              })
+              .catch(error => {
+                console.error("Error al cargar el aval:", error);
+              });
           }
         });
-
-        if (persona) {
-          // Si el aval existe y corresponde a una persona, lo guardamos en el nuevo objeto
-          const nuevoAval = {
-            avalNumero: avalNumero,
-            fechaCarga: new Date().toISOString(),
-            persona: persona,
-          };
-
-          firebase
-            .database()
-            .ref("avalesCargados")
-            .push(nuevoAval)
-            .then(() => {
-              this.alertType = "success";
-              this.alertMessage = `Aval <b>${avalNumero}</b> cargado exitosamente a nombre de <b>${persona}</b>.`;
-              this.showAlert = true;
-              this.inputValue = ""; // Limpiar el campo de entrada después de cargar el aval
-              setTimeout(() => {
-                this.showAlert = false;
-              }, 3500);
-            })
-            .catch((error) => {
-              console.error("Error al cargar el aval:", error);
-            });
-        } else {
-          this.alertType = "warning";
-          this.alertMessage = `El aval ${avalNumero} no existe o no corresponde a ninguna persona.`;
-          this.showAlert = true;
-          setTimeout(() => {
-            this.showAlert = false;
-          }, 3500);
-        }
       } else {
         this.alertType = "warning";
-        this.alertMessage = "No hay datos de avales en la base de datos";
+        this.alertMessage = `El aval ${avalNumero} no existe o no corresponde a ninguna persona.`;
         this.showAlert = true;
         setTimeout(() => {
           this.showAlert = false;
         }, 3500);
       }
     },
+
 
     handleEnterKeyPress() {
       if (this.uploadType) {

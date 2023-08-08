@@ -6,7 +6,12 @@ import firebase from 'firebase/app';
 Vue.config.productionTip = false
 
 let app = '';
+import VueSweetalert2 from 'vue-sweetalert2';
 
+// If you don't need the styles, do not connect
+import 'sweetalert2/dist/sweetalert2.min.css';
+
+Vue.use(VueSweetalert2);
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyBEIUxnyjsetliAawU-UJs7mzx4n6Tb94U",
