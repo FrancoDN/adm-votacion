@@ -159,13 +159,13 @@ export default {
             { content: presidenteVotos },
           ]);
 
-          if (data[partido].hasOwnProperty('LISTA A CELESTE Y BLANCA')) {
-            const listaCelesteBlancaVotos = data[partido]['LISTA A CELESTE Y BLANCA'].presidente;
-            tableData.push([
-              { content: 'LISTA A CELESTE Y BLANCA' },
-              { content: listaCelesteBlancaVotos },
-            ]);
-          }
+          // if (data[partido].hasOwnProperty('LISTA A CELESTE Y BLANCA')) {
+          //   const listaCelesteBlancaVotos = data[partido]['LISTA A CELESTE Y BLANCA'].presidente;
+          //   tableData.push([
+          //     { content: 'LISTA A CELESTE Y BLANCA' },
+          //     { content: listaCelesteBlancaVotos },
+          //   ]);
+          // }
         }
 
         doc.autoTable({
