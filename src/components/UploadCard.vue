@@ -58,15 +58,25 @@
         </template>
       </v-alert>
     </transition>
+    <modal-aval :mostrarModal="mostrarModal" :duplicateAvales="avalesDuplicados"
+      @aval-seleccionado="manejarAvalSeleccionado" />
   </div>
 </template>
 
 <script>
 import firebase from "firebase/app";
 import "firebase/database";
+import ModalAval from "./ModalAvales.vue";
 export default {
+  components: {
+    ModalAval
+  },
   data() {
     return {
+      
+      avalesDuplicados: [],
+      mostrarModal: false,
+      nombreApoderadoSeleccionado: "",
       buttonQ: {
         backgroundColor: "white",
         color: "white",
@@ -156,6 +166,25 @@ export default {
         }, 3500);
         return;
       }
+      const snapshot = await firebase.database().ref("avales").once("value");
+      const avalesData = snapshot.val();
+
+      const avalesDuplicados = [];
+      for (const apoderadoKey in avalesData) {
+        const apoderado = avalesData[apoderadoKey];
+        this.nombreApoderadoSeleccionado = apoderado.name
+        const avalesPersona = apoderado.avales;
+        if (avalesPersona) {
+          const duplicados = avalesPersona.filter(aval => aval.orden === avalNumero);
+          avalesDuplicados.push(...duplicados);
+        }
+      }
+      console.log(avalesDuplicados);
+      if (avalesDuplicados.length > 1) {
+        this.avalesDuplicados = avalesDuplicados;
+        this.mostrarModal = true;
+        return;
+      }
 
       const snapshotAvalCargados = await firebase
         .database()
@@ -175,9 +204,6 @@ export default {
           return;
         }
       }
-
-      const snapshot = await firebase.database().ref("avales").once("value");
-      const avalesData = snapshot.val();
 
       let personaEncontrada = null;
 
@@ -239,12 +265,12 @@ export default {
                   timer: 5500,
                   timerProgressBar: true,
                   didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', this.$swal.stopTimer)
-                        toast.addEventListener('mouseleave', this.$swal.resumeTimer)
-                        this.inputValue = ""; // Limpiar el campo de entrada después de cargar el aval
+                    toast.addEventListener('mouseenter', this.$swal.stopTimer)
+                    toast.addEventListener('mouseleave', this.$swal.resumeTimer)
+                    this.inputValue = ""; // Limpiar el campo de entrada después de cargar el aval
 
-                      }
-                    });
+                  }
+                });
 
                 Toast.fire({
                   icon: 'success',
@@ -266,7 +292,93 @@ export default {
       }
     },
 
+    async manejarAvalSeleccionado(avalSeleccionado) {
+      let nombreApoderado = "";
 
+      // Obtener la lista de avales desde la base de datos
+      const snapshotAvales = await firebase.database().ref("avales").once("value");
+      const avalesData = snapshotAvales.val();
+
+      // Buscar avales duplicados por número de orden
+      const avalesDuplicados = [];
+      for (const mesaKey in avalesData) {
+        const apoderado = avalesData[mesaKey];
+        const avalesPersona = apoderado.avales;
+        if (avalesPersona) {
+          const duplicados = avalesPersona.filter(aval => aval.orden === avalSeleccionado.orden);
+          avalesDuplicados.push(...duplicados);
+        }
+      }
+
+      // Buscar el nombre del apoderado correspondiente al nombre del aval seleccionado
+      for (const mesaKey in avalesData) {
+        const apoderado = avalesData[mesaKey];
+        const avalesPersona = apoderado.avales;
+        if (avalesPersona) {
+          const avalEncontrado = avalesPersona.find(aval => aval.nombre === avalSeleccionado.nombre);
+          if (avalEncontrado) {
+            nombreApoderado = apoderado.name;
+            break;
+          }
+        }
+      }
+      const snapshotAvalCargados = await firebase
+        .database()
+        .ref("avalesCargados")
+        .once("value");
+      const avalesCargados = snapshotAvalCargados.val();
+
+      if (avalesCargados) {
+        console.log(avalesCargados);
+        if (Object.values(avalesCargados).some(avalCargado => avalCargado.persona.nombre === avalSeleccionado.nombre)) {
+          this.alertType = "error";
+          this.alertMessage = `El aval ${avalSeleccionado.orden} ya fue cargado previamente.`;
+          this.showAlert = true;
+          this.inputValue = "";
+          setTimeout(() => {
+            this.showAlert = false;
+          }, 3500);
+          return;
+        }
+      }
+      
+      // Subir el aval seleccionado a la base de datos
+      const nuevoAval = {
+        avalNumero: avalSeleccionado.orden,
+        fechaCarga: new Date().toISOString(),
+        nombreApoderado: nombreApoderado,
+        persona: {
+          nombre: avalSeleccionado.nombre,
+          celular: avalSeleccionado.celular,
+          domicilio: avalSeleccionado.domicilio,
+        },
+      };
+
+      try {
+        await firebase.database().ref("avalesCargados").push(nuevoAval);
+        this.mostrarModal = false;
+
+        const Toast = this.$swal.mixin({
+          toast: true,
+          position: 'bottom-end',
+          showConfirmButton: false,
+          timer: 5500,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', this.$swal.stopTimer)
+            toast.addEventListener('mouseleave', this.$swal.resumeTimer)
+            this.inputValue = ""; // Limpiar el campo de entrada después de cargar el aval
+          }
+        });
+
+        Toast.fire({
+          icon: 'success',
+          html: `<p>Aval <b>${avalSeleccionado.orden}</b> cargado exitosamente a nombre de <b>${avalSeleccionado.nombre}</b>. <br>Apoderado: <b>${nombreApoderado}</b></p>`,
+        });
+      } catch (error) {
+        console.error("Error al cargar el aval:", error);
+      }
+    },
     handleEnterKeyPress() {
       if (this.uploadType) {
         // Si el tipo de carga es telegrama, hacer clic en el botón de carga de telegrama
