@@ -59,7 +59,7 @@
       </v-alert>
     </transition>
     <modal-aval :mostrarModal="mostrarModal" :duplicateAvales="avalesDuplicados"
-      @aval-seleccionado="manejarAvalSeleccionado" />
+      @numero-mesa-seleccionado="manejarMesa" />
   </div>
 </template>
 
@@ -73,7 +73,7 @@ export default {
   },
   data() {
     return {
-      
+
       avalesDuplicados: [],
       mostrarModal: false,
       nombreApoderadoSeleccionado: "",
@@ -166,6 +166,8 @@ export default {
         }, 3500);
         return;
       }
+
+      //* Coroboramos si hay mas de un numero de orden igual en la base de datos
       const snapshot = await firebase.database().ref("avales").once("value");
       const avalesData = snapshot.val();
 
@@ -186,6 +188,7 @@ export default {
         return;
       }
 
+      //* Coroboramos si el aval ya fue cargado previamente
       const snapshotAvalCargados = await firebase
         .database()
         .ref("avalesCargados")
@@ -205,6 +208,7 @@ export default {
         }
       }
 
+      //* Buscamos el aval en la base de datos en caso de que no se cumpla ninguna condicion anterior
       let personaEncontrada = null;
 
       for (const apoderadoKey in avalesData) {
@@ -219,6 +223,7 @@ export default {
                 nombreApoderado: apoderado.name,
                 telefonoPersona: aval.celular,
                 domicilioPersona: aval.domicilio,
+                escuelaPersona: aval.escuela,
               };
               break;
             }
@@ -230,6 +235,7 @@ export default {
         }
       }
 
+      //* Creamos el nuevo aval a cargar
       if (personaEncontrada) {
         const nuevoAval = {
           avalNumero: avalNumero,
@@ -239,9 +245,11 @@ export default {
             nombre: personaEncontrada.nombrePersona,
             celular: personaEncontrada.telefonoPersona,
             domicilio: personaEncontrada.domicilioPersona,
+            escuela: personaEncontrada.escuelaPersona,
           },
         };
 
+        //* Si no se encuentra el aval en la base de datos, se muestra un mensaje de error
         this.$swal({
           title: '<p>Confirmar aval</p>',
           html: `<p>¿Estás seguro de que el número de orden: <b>${avalNumero}</b> es correcto?</p>`,
@@ -292,9 +300,9 @@ export default {
       }
     },
 
-    async manejarAvalSeleccionado(avalSeleccionado) {
+    async manejarMesa(mesaCargada) {
       let nombreApoderado = "";
-
+      const avalNumero = parseInt(this.inputValue, 10);
       // Obtener la lista de avales desde la base de datos
       const snapshotAvales = await firebase.database().ref("avales").once("value");
       const avalesData = snapshotAvales.val();
@@ -305,17 +313,40 @@ export default {
         const apoderado = avalesData[mesaKey];
         const avalesPersona = apoderado.avales;
         if (avalesPersona) {
-          const duplicados = avalesPersona.filter(aval => aval.orden === avalSeleccionado.orden);
+          const duplicados = avalesPersona.filter(aval => aval.orden === avalNumero);
           avalesDuplicados.push(...duplicados);
         }
       }
+
+      // Obtener la lista de escuelas desde Firebase
+      const snapshotEscuelas = await firebase.database().ref("escuelas").once("value");
+      const escuelasData = snapshotEscuelas.val();
+
+      // Buscar el establecimiento correspondiente al número de mesa ingresado
+      let establecimientoEncontrado = null;
+      for (const establecimientoKey in escuelasData) {
+        const establecimiento = escuelasData[establecimientoKey];
+        const mesas = establecimiento.mesa;
+        if (mesas && mesas.includes(parseInt(mesaCargada))) {
+          establecimientoEncontrado = establecimiento;
+          console.log(establecimientoEncontrado);
+          break;
+        }
+      }
+
+      if (!establecimientoEncontrado) {
+        console.error("No se encontró un establecimiento para el número de mesa ingresado.");
+        return;
+      }
+      // Buscar el aval duplicado con el mismo nombre de establecimiento
+      const avalDuplicadoMismoEstablecimiento = avalesDuplicados.find(aval => aval.escuela === establecimientoEncontrado.establecimiento);
 
       // Buscar el nombre del apoderado correspondiente al nombre del aval seleccionado
       for (const mesaKey in avalesData) {
         const apoderado = avalesData[mesaKey];
         const avalesPersona = apoderado.avales;
         if (avalesPersona) {
-          const avalEncontrado = avalesPersona.find(aval => aval.nombre === avalSeleccionado.nombre);
+          const avalEncontrado = avalesPersona.find(aval => aval.nombre === avalDuplicadoMismoEstablecimiento.nombre);
           if (avalEncontrado) {
             nombreApoderado = apoderado.name;
             break;
@@ -329,10 +360,9 @@ export default {
       const avalesCargados = snapshotAvalCargados.val();
 
       if (avalesCargados) {
-        console.log(avalesCargados);
-        if (Object.values(avalesCargados).some(avalCargado => avalCargado.persona.nombre === avalSeleccionado.nombre)) {
+        if (Object.values(avalesCargados).some(avalCargado => avalCargado.persona.nombre === avalDuplicadoMismoEstablecimiento.nombre)) {
           this.alertType = "error";
-          this.alertMessage = `El aval ${avalSeleccionado.orden} ya fue cargado previamente.`;
+          this.alertMessage = `El aval ${avalNumero} ya fue cargado previamente.`;
           this.showAlert = true;
           this.inputValue = "";
           setTimeout(() => {
@@ -341,16 +371,17 @@ export default {
           return;
         }
       }
-      
+
       // Subir el aval seleccionado a la base de datos
       const nuevoAval = {
-        avalNumero: avalSeleccionado.orden,
+        avalNumero: avalDuplicadoMismoEstablecimiento.orden,
         fechaCarga: new Date().toISOString(),
         nombreApoderado: nombreApoderado,
         persona: {
-          nombre: avalSeleccionado.nombre,
-          celular: avalSeleccionado.celular,
-          domicilio: avalSeleccionado.domicilio,
+          nombre: avalDuplicadoMismoEstablecimiento.nombre,
+          celular: avalDuplicadoMismoEstablecimiento.celular,
+          domicilio: avalDuplicadoMismoEstablecimiento.domicilio,
+          escuela: avalDuplicadoMismoEstablecimiento.escuela,
         },
       };
 
@@ -373,7 +404,7 @@ export default {
 
         Toast.fire({
           icon: 'success',
-          html: `<p>Aval <b>${avalSeleccionado.orden}</b> cargado exitosamente a nombre de <b>${avalSeleccionado.nombre}</b>. <br>Apoderado: <b>${nombreApoderado}</b></p>`,
+          html: `<p>Aval <b>${avalNumero}</b> cargado exitosamente a nombre de <b>${avalDuplicadoMismoEstablecimiento.nombre}</b>. <br>Apoderado: <b>${nombreApoderado}</b></p>`,
         });
       } catch (error) {
         console.error("Error al cargar el aval:", error);

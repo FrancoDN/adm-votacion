@@ -1,42 +1,32 @@
 <template>
   <div v-if="mostrarModal && modal" class="modal-container">
-
     <div class="modal-content">
-      <v-btn @click="cerrarModal"> Cerrar</v-btn>
-
-      <h2 class="modal-title">Avales con el mismo número de orden</h2>
-      <ul class="modal-list">
-        <li v-for="(aval, index) in duplicateAvales" :key="index" class="modal-item">
-          {{ aval.nombre }}
-          <!-- Mostrar más detalles relevantes del aval aquí -->
-          <button @click="seleccionarAval(aval)" class="modal-button">Seleccionar</button>
-        </li>
-      </ul>
+      <v-btn @click="cerrarModal">Cerrar</v-btn>
+      <h2 class="modal-title">Ingresar Número de Mesa</h2>
+      <input v-model="numeroMesa" type="text" placeholder="Ingrese el número de mesa" class="modal-input" />
+      <button @click="seleccionarNumeroMesa" class="modal-button">Cargar</button>
     </div>
-    <div class="modal-overlay">
-
-    </div>
+    <div class="modal-overlay"></div>
   </div>
 </template>
 
 <script>
 export default {
   props: {
-    duplicateAvales: Array, // Lista de avales con el mismo número de orden
     mostrarModal: Boolean, // Indica si el modal debe mostrarse o no
   },
   data() {
     return {
       modal: true,
+      numeroMesa: '',
     }
   },
   methods: {
-    seleccionarAval(avalSeleccionado) {
-      this.$emit("aval-seleccionado", avalSeleccionado);
+    seleccionarNumeroMesa() {
+      this.$emit("numero-mesa-seleccionado", this.numeroMesa);
     },
     cerrarModal() {
       this.modal = false;
-      console.log(this.duplicateAvales);
     },
   },
 };
@@ -69,15 +59,11 @@ export default {
   margin-bottom: 10px;
 }
 
-.modal-list {
-  list-style: none;
-  padding: 0;
-}
-
-.modal-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.modal-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
   margin-bottom: 10px;
 }
 
