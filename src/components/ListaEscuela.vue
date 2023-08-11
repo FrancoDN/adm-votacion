@@ -1,69 +1,84 @@
 <template>
-  <v-container fluid>
-    <v-row>
-      <v-col cols="12">
-        <v-card class="school-card mb-4 elevation-3">
-          <v-card-title class="school-title">{{ school.name }}</v-card-title>
-          <v-card-text>
-            <v-data-table :headers="headers" :items="sortedParties" hide-default-footer class="elevation-1">
-              <template v-slot:item="{ item }">
-                <tr>
-                  <td class="text-left">{{ item.name }}</td>
-                  <td class="text-right">{{ item.votes }}</td>
-                </tr>
-              </template>
-            </v-data-table>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn text color="error" class="null-votes-btn">{{ school.nullVotes }} Votos Nulos</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+  <v-card class="school-card mb-4 elevation-3" v-if="escuela">
+    <v-card-title class="school-title">{{ nombreEscuela }}</v-card-title>
+    <v-card-text>
+      <v-data-table :headers="encabezados" :items="candidatosYVotos" hide-default-footer class="elevation-1">
+        <template v-slot:item="{ item }">
+          <tr :class="{ 'highlight-row': item.candidatoIntendente === 'Vanesa QUEYFFER' }">
+            <td class="text-left">
+              <b>{{ item.nombrePartido }}</b> - {{ item.candidatoIntendente }}
+            </td>
+            <td class="text-right">{{ item.intendente }}</td>
+          </tr>
+        </template>
+      </v-data-table>
+    </v-card-text>
+  </v-card>
+  <div v-else>
+    <p>Cargando...</p>
+  </div>
 </template>
-  
-  <script>
-  export default {
-    props: {
-      school: Object
-    },
-    computed: {
-      sortedParties() {
-        return this.school.parties.slice().sort((a, b) => b.votes - a.votes);
-      },
-      headers() {
-        return [
-          { text: 'Partido', value: 'name', align: 'start' },
-          { text: 'Votos', value: 'votes', align: 'end' }
-        ];
+
+<script>
+export default {
+  props: {
+    escuela: Object,
+    nombreEscuelaPadre: String,
+  },
+  computed: {
+    candidatosYVotos() {
+      if (this.escuela) {
+        const candidatosArray = Object.entries(this.escuela);
+
+        // Agregar el nombre del partido a cada candidato
+        const candidatosConPartido = candidatosArray.map(([nombrePartido, candidato]) => {
+          return {
+            ...candidato,
+            nombrePartido: nombrePartido
+          };
+        });
+
+        // Ordenar los candidatos por votos en orden descendente
+        candidatosConPartido.sort((a, b) => b.intendente - a.intendente);
+
+        return candidatosConPartido.slice(0, 5);
       }
+      return [];
     },
-    mounted() {
-    }
-  };
-  </script>
-  
-  <style scoped>
-  .elevation-1 {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .v-card-title {
-    font-size: 24px;
-    font-weight: bold;
-  }
-  
-  .text-left {
-    text-align: left;
-  }
-  
-  .text-right {
-    text-align: right;
-  }
-  
-  .v-btn {
-    font-weight: bold;
-  }
-  </style>
-  
+    encabezados() {
+      return [
+        { text: "Candidato", value: "candidatoIntendente", align: "start" },
+        { text: "Votos", value: "intendente", align: "end" },
+      ];
+    },
+    nombreEscuela() {
+      return this.nombreEscuelaPadre;
+    },
+  },
+};
+</script>
+
+<style scoped>
+.highlight-row {
+  background-color: rgba(27, 174, 208, 0.5); /* Cambia este color al que prefieras */
+}
+td {
+  font-family: Nunito;
+}
+.elevation-1 {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.v-card-title {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+</style>
