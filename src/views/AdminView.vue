@@ -33,7 +33,7 @@ export default {
 };
 </script>
 
-<style>
+<style> 
 p {
   font-family: Nunito;
   margin: 0;
