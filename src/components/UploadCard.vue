@@ -342,7 +342,7 @@ export default {
 
                 Toast.fire({
                   icon: 'success',
-                  html: `<p>Aval <b>${avalNumero}</b> cargado exitosamente a nombre de <b>${personaEncontrada.nombrePersona}</b>. <br>Apoderado: <b>${personaEncontrada.nombreApoderado}</b></p>`,
+                  html: `<p>Aval <b>${avalNumero}</b> cargado exitosamente a nombre de <b>${personaEncontrada.nombrePersona}</b>. <br>Responsable: <b>${personaEncontrada.nombreApoderado}</b></p>`,
                 });
               })
               .catch(error => {
