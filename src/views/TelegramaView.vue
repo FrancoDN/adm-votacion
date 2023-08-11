@@ -178,7 +178,7 @@ export default {
                                             intendente: votosIntendente,
                                         };
                                     } else {
-                                        votosEscuelaData[nombreLista].votos.intendente += votosIntendente;
+                                        votosEscuelaData[nombreLista].intendente += votosIntendente;
                                     }
                                 });
 
@@ -242,6 +242,12 @@ export default {
                                 .catch((error) => {
                                     console.error('Error al actualizar/enviar los datos a Firebase:', error);
                                 });
+
+                            const mesaNumero = parseInt(localStorage.getItem("mesaNumero"));
+                            firebase.database().ref("mesasCargadas").child(mesaNumero).set(true)
+                                .catch(error => {
+                                    console.error("Error al actualizar mesasCargadas:", error);
+                                });
                         } else {
                             console.log('No hay nuevos datos para enviar a Firebase.');
                         }
@@ -270,6 +276,11 @@ export default {
                                 })
                                 .catch((error) => {
                                     console.error('Error al actualizar/enviar los datos a Firebase:', error);
+                                });
+                            const mesaNumero = parseInt(localStorage.getItem("mesaNumero"));
+                            firebase.database().ref("mesasCargadas").child(mesaNumero).set(true)
+                                .catch(error => {
+                                    console.error("Error al actualizar mesasCargadas:", error);
                                 });
                         } else {
                             console.log('No hay datos para enviar a Firebase.');

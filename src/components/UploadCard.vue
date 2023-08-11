@@ -154,18 +154,63 @@ export default {
         return;
       }
 
-      localStorage.setItem("mesaNumero", mesaNumero);
-      if (localStorage.getItem("mesaNumero")) {
-        this.alertType = "success";
-        this.alertMessage = `Mesa <b>${mesaNumero}</b> cargada exitosamente`;
-        this.showAlert = true;
-        this.inputValue = ""; // Limpiar el campo de entrada después de cargar el aval
-      }
-      setTimeout(() => {
-        this.showAlert = false;
-        this.$router.push({ name: 'telegrama' });
+      // Verificar si mesaNumero pertenece a alguna escuela en escuelasData
+      const escuelasRef = firebase.database().ref("escuelas");
+      escuelasRef.once("value").then(snapshot => {
+        const escuelasData = snapshot.val();
+        let mesaPerteneceAEscuela = false;
 
-      }, 200);
+        for (const key in escuelasData) {
+          if (Object.prototype.hasOwnProperty.call(escuelasData, key)) {
+            const mesaArray = escuelasData[key].mesa;
+            if (mesaArray && mesaArray.includes(mesaNumero)) {
+              mesaPerteneceAEscuela = true;
+              break;
+            }
+          }
+        }
+        if (mesaPerteneceAEscuela) {
+          // Verificar si la mesa ya está en mesasCargadas
+          const mesasCargadasRef = firebase.database().ref("mesasCargadas");
+          mesasCargadasRef.once("value").then(snapshot => {
+            const mesasCargadasData = snapshot.val();
+
+            if (mesasCargadasData && mesasCargadasData[mesaNumero]) {
+              // La mesa ya fue cargada previamente
+              this.alertType = "warning";
+              this.alertMessage = `La mesa <b>${mesaNumero}</b> ya fue cargada previamente.`;
+              this.showAlert = true;
+              setTimeout(() => {
+                this.showAlert = false;
+              }, 3500);
+            } else {
+                  localStorage.setItem("mesaNumero", mesaNumero);
+                  if (localStorage.getItem("mesaNumero")) {
+                    this.alertType = "success";
+                    this.alertMessage = `Mesa <b>${mesaNumero}</b> cargada exitosamente`;
+                    this.showAlert = true;
+                    this.inputValue = ""; // Limpiar el campo de entrada después de cargar el aval
+                  }
+                  setTimeout(() => {
+                    this.showAlert = false;
+                    this.$router.push({ name: 'telegrama' });
+
+                  }, 2000);
+            }
+          });
+        } else {
+          // El número de mesa no pertenece a ninguna escuela
+          // Mostrar mensaje de error
+          this.alertType = "error";
+          this.alertMessage = `El número de mesa <b>${mesaNumero}</b> no pertenece a ninguna escuela registrada.`;
+          this.showAlert = true;
+          setTimeout(() => {
+            this.showAlert = false;
+          }, 3500);
+        }
+      });
+
+
     },
 
     async subirQuiniela() {

@@ -141,7 +141,7 @@
                 </tr>
             </tbody>
         </table>
-        <v-btn @click="submitData" color="primary" block class="mt-5 mb-5">ENVIAR</v-btn>
+        <v-btn @click="submitData" color="primary" block class="mt-5 mb-5">SIGUIENTE</v-btn>
     </div>
 </template>
 
