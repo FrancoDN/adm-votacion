@@ -16,6 +16,9 @@
       <button @click="escuela">
         <p class="navBar" v-if="shouldShowEscuelaButton">ESCUELAS</p>
       </button>
+      <button @click="intendentes">
+        <p class="navBar" v-if="shouldShowIntendentesButton">INTENDENTES</p>
+      </button>
       <v-btn v-if="shouldShowSignOutButton" color="#1BAED0" large @click="signOut"
         style="border-radius: 10rem; height: 2.5rem;">
         <p> Salir</p>
@@ -81,6 +84,9 @@ export default {
     shouldShowEscuelaButton() {
       return this.$route.path !== "/escuela";
     },
+    shouldShowIntendentesButton() {
+      return this.$route.path !== "/intendentes";
+    },
   },
 
   watch: {
@@ -139,6 +145,9 @@ export default {
 
     escuela() {
       this.$router.push("/escuela");
+    },
+    intendentes() {
+      this.$router.push("/intendentes");
     },
 
     signOut() {

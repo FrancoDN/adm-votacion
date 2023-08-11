@@ -6,6 +6,7 @@ import UserView from '../views/UserView.vue'
 import QuinielaView from '../views/QuinielaView.vue'
 import TelegramaView from '../views/TelegramaView.vue'
 import EscuelasView from '../views/EscuelasView.vue'
+import IntendentesView from '../views/IntendentesView.vue'
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
@@ -40,6 +41,15 @@ const routes = [
     path: '/quiniela',
     name: 'quiniela',
     component: QuinielaView,
+    meta: {
+      requiresAuth: true,
+      isAdminRoute: true
+    }
+  },
+  {
+    path: '/intendentes',
+    name: 'intendentes',
+    component: IntendentesView,
     meta: {
       requiresAuth: true,
       isAdminRoute: true
