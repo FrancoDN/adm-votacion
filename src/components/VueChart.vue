@@ -55,26 +55,6 @@ export default {
     };
   },
 
-  mounted() {
-    this.actualizarDatosGrafico("intendencia");
-  },
-  watch: {
-    tipoVoto(newTipoVoto) {
-      this.actualizarDatosGrafico(newTipoVoto);
-    },
-  },
-  methods: {
-    actualizarDatosGrafico(tipoVoto) {
-      console.log("hola");
-      const datosPorTipoDeVoto = {
-        presidencia: [30, 40, 20, 10],
-        gobernacion: [10, 20, 60, 10],
-        intendencia: [70, 30, 10, 2],
-      };
-      console.log(tipoVoto);
-      this.chartData.datasets[0].data = datosPorTipoDeVoto[tipoVoto];
-      this.chartKey = tipoVoto;
-    },
-  },
+
 };
 </script>

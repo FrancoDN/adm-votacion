@@ -291,7 +291,6 @@ export default {
     },
     mounted(){
         this.numeroMesa = localStorage.getItem("mesaNumero");
-        console.log(this.numeroMesa);
     },
 
     methods: {
@@ -400,7 +399,6 @@ export default {
             // Puedes hacer lo que desees con este objeto, por ejemplo, enviarlo a un servidor o guardar los datos localmente
             this.$emit("datos-agrupados-nacion", datosAgrupadosNacion);
             this.$emit("enviar");
-            localStorage.removeItem("mesaNumero");
         },
     },
 

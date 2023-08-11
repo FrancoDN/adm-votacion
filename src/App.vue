@@ -13,6 +13,9 @@
       <button @click="quiniela">
         <p class="navBar" v-if="shouldShowQuinielaButton">QUINIELA</p>
       </button>
+      <button @click="escuela">
+        <p class="navBar" v-if="shouldShowEscuelaButton">ESCUELAS</p>
+      </button>
       <v-btn v-if="shouldShowSignOutButton" color="#1BAED0" large @click="signOut"
         style="border-radius: 10rem; height: 2.5rem;">
         <p> Salir</p>
@@ -75,6 +78,9 @@ export default {
     shouldShowQuinielaButton() {
       return this.$route.path !== "/quiniela";
     },
+    shouldShowEscuelaButton() {
+      return this.$route.path !== "/escuela";
+    },
   },
 
   watch: {
@@ -114,13 +120,6 @@ export default {
       }
     },
 
-    loadProgress() {
-      if (this.authInProgress) {
-        return;
-      }
-
-      this.authInProgress = true;
-    },
     // Agregar el método para manejar el cambio de modo pantalla completa
     handleFullscreenChange() {
       this.showNavbar = !document.fullscreenElement;
@@ -128,17 +127,18 @@ export default {
 
     quiniela() {
       this.$router.push("/quiniela");
-      this.loadInProgress();
     },
 
     estadistica() {
       this.$router.push("/admin");
-      this.loadInProgress();
     },
 
     carga() {
       this.$router.push("/user");
-      this.loadInProgress();
+    },
+
+    escuela() {
+      this.$router.push("/escuela");
     },
 
     signOut() {

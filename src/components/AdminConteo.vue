@@ -280,7 +280,6 @@ export default {
           candidatos.push({ partido, politico: candidato, color, votos });
         });
 
-        console.log(candidatos);
         // Agrupar los candidatos por partido y sumar sus votos
         const candidatosAgrupados = {};
         candidatos.forEach((candidato) => {

@@ -93,7 +93,6 @@ mounted() {
 
       // Agrupo los avales por el campo "nombreApoderado"
       Object.values(data).forEach((aval) => {
-        console.log(aval);
         const nombreApoderado = aval.nombreApoderado;
         if (nombreApoderado && !personasAval[nombreApoderado]) {
           personasAval[nombreApoderado] = [aval];

@@ -165,7 +165,7 @@ export default {
         this.showAlert = false;
         this.$router.push({ name: 'telegrama' });
 
-      }, 3500);
+      }, 200);
     },
 
     async subirQuiniela() {
@@ -194,7 +194,6 @@ export default {
           avalesDuplicados.push(...duplicados);
         }
       }
-      console.log(avalesDuplicados);
       if (avalesDuplicados.length > 1) {
         this.avalesDuplicados = avalesDuplicados;
         this.mostrarModal = true;
@@ -337,9 +336,7 @@ export default {
 
       //Filtramos los avales duplicados segun el numero de mesa
       const avalFiltradoPorMesa = avalesDuplicados.filter(aval => aval.mesa === parseInt(mesaCargada));
-      console.log(avalFiltradoPorMesa);
       if (avalFiltradoPorMesa.length === 0) {
-        console.log("lala");
         this.alertType = "warning";
         this.alertMessage = `El número de mesa <b>${mesaCargada}</b> no corresponde al orden: <b>${avalNumero}</b>`;
         this.mostrarModal = false
@@ -350,7 +347,6 @@ export default {
         }, 3500);
         return;
       } else {
-        console.log(avalFiltradoPorMesa[0].nombre);
         // Buscar el nombre del apoderado correspondiente al nombre del aval seleccionado
         for (const mesaKey in avalesData) {
           const apoderado = avalesData[mesaKey];

@@ -23,6 +23,8 @@ export default {
 
     data() {
         return {
+            nombreEscuela: "",
+            escuelaFiltrada: "",
             datosAgrupados: {},
             datosAgrupadosNacion: {},
             mostrarComponenteProvincia: true,
@@ -46,9 +48,11 @@ export default {
             }
         },
         enviarProvincia() {
-            const dbRef = firebase.database().ref('provincial');
+            const numeroMesa = parseInt(localStorage.getItem('mesaNumero'));
 
-            // Consultar la base de datos para verificar si la lista ya existe
+            const dbRef = firebase.database().ref('provincial');
+            // const escRef = firebase.database().ref('votosEscuelas');
+
             dbRef.once('value')
                 .then((snapshot) => {
                     const data = snapshot.val();
@@ -121,11 +125,81 @@ export default {
                             .catch((error) => {
                                 console.error('Error al actualizar/enviar los datos a Firebase:', error);
                             });
+
+
+
                     }
                 })
                 .catch((error) => {
                     console.error('Error al consultar los datos en Firebase:', error);
                 });
+
+
+            firebase.database().ref('escuelas').once('value')
+                .then((snapshot) => {
+                    const escuelasData = snapshot.val();
+                    // Buscar en los datos de las escuelas
+                    for (const keyEscuela in escuelasData) {
+                        if (Object.prototype.hasOwnProperty.call(escuelasData, keyEscuela)) {
+                            const escuela = escuelasData[keyEscuela];
+
+                            for (const keyMesa in escuela.mesa) {
+                                if (Object.prototype.hasOwnProperty.call(escuela.mesa, keyMesa)) {
+                                    const numeroDeMesa = escuela.mesa[keyMesa];
+
+                                    if (numeroDeMesa === numeroMesa) {
+                                        this.nombreEscuela = escuela.establecimiento;
+                                        // console.log(`El número de mesa ${numeroMesa} corresponde a la escuela ${escuela.establecimiento}.`);
+                                        break; // Terminar la búsqueda
+                                    }
+                                }
+                            }
+
+                            if (this.nombreEscuela) {
+                                break; // Terminar la búsqueda
+                            }
+                        }
+                    }
+                    if (this.nombreEscuela) {
+                        const votosEscuelaRef = firebase.database().ref('votosEscuelas').child(this.nombreEscuela);
+
+                        votosEscuelaRef.once('value')
+                            .then((snapshot) => {
+                                const votosEscuelaData = snapshot.val() || {};
+
+                                // Agregar los datos de this.datosAgrupados a la escuela correspondiente
+                                Object.keys(this.datosAgrupados).forEach((nombreLista) => {
+                                    const listaActual = this.datosAgrupados[nombreLista];
+                                    const votosIntendente = listaActual ? parseInt(listaActual.votos.intendente) || 0 : 0;
+
+                                    if (!votosEscuelaData[nombreLista]) {
+                                        votosEscuelaData[nombreLista] = {
+                                            candidatoIntendente: listaActual ? listaActual.candidatoIntendente : '',
+                                            intendente: votosIntendente,
+                                        };
+                                    } else {
+                                        votosEscuelaData[nombreLista].votos.intendente += votosIntendente;
+                                    }
+                                });
+
+                                // Actualizar/subir los datos en Firebase
+                                votosEscuelaRef.set(votosEscuelaData)
+                                    .then(() => {
+                                        console.log('Datos de votosEscuelas actualizados/enviados a Firebase correctamente.');
+                                    })
+                                    .catch((error) => {
+                                        console.error('Error al actualizar/enviar los datos a Firebase:', error);
+                                    });
+                            })
+                            .catch((error) => {
+                                console.error('Error al consultar los datos en votosEscuelas en Firebase:', error);
+                            });
+                    }
+                    else {
+                        console.log(`No se encontró un establecimiento para el número de mesa ${numeroMesa}.`);
+                    }
+                });
+
         },
 
         enviarNacional() {
@@ -145,19 +219,19 @@ export default {
                             Object.keys(agrupacionActual).forEach((keyLista) => {
                                 const lista = agrupacionActual[keyLista];
                                 console.log(lista);
-                            const votosPresidente = agrupacionActual ? parseInt(lista.votos.presidente) || 0 : 0;
+                                const votosPresidente = agrupacionActual ? parseInt(lista.votos.presidente) || 0 : 0;
 
-                            if (!data[keyLista]) {
-                                data[keyLista] = {
-                                    presidente: votosPresidente,
-                                };
-                            } else {
-                                data[keyLista].presidente += votosPresidente;
-                            }
+                                if (!data[keyLista]) {
+                                    data[keyLista] = {
+                                        presidente: votosPresidente,
+                                    };
+                                } else {
+                                    data[keyLista].presidente += votosPresidente;
+                                }
 
-                            existenDatos = true; // Marcamos que existen datos para evitar el envío duplicado
+                                existenDatos = true; // Marcamos que existen datos para evitar el envío duplicado
+                            });
                         });
-                    });
 
                         // Actualizar/subir los datos en Firebase
                         if (existenDatos) {

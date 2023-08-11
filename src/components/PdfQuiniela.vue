@@ -61,7 +61,6 @@ export default {
         const avalesFaltantes = avalesTotales.filter(
           (aval) => !avalesCargados.includes(aval.orden)
         );
-        console.log(avalesFaltantes);
         return avalesFaltantes;
       } else {
         console.log("La persona seleccionada no existe en el objeto numeroDeAvales.");

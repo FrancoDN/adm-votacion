@@ -5,6 +5,7 @@ import AdminView from '../views/AdminView.vue'
 import UserView from '../views/UserView.vue'
 import QuinielaView from '../views/QuinielaView.vue'
 import TelegramaView from '../views/TelegramaView.vue'
+import EscuelasView from '../views/EscuelasView.vue'
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
@@ -45,6 +46,15 @@ const routes = [
     }
   },
   {
+    path: '/escuela',
+    name: 'escuela',
+    component: EscuelasView,
+    meta: {
+      requiresAuth: true,
+      isAdminRoute: true
+    }
+  },
+  {
     path: '/telegrama',
     name: 'telegrama',
     component: TelegramaView,
@@ -77,7 +87,6 @@ router.beforeEach(async (to, from, next) => {
     try {
       const userInfo = await getUserInfo(currentUser.uid);
       to.meta.hideNavbar = userInfo.isAdmin;
-      console.log(userInfo);
       if (userInfo && userInfo.isAdmin) {
         // Si el usuario es un administrador (isAdmin: true), déjalo pasar a cualquier ruta.
         next();

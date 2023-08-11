@@ -55,7 +55,7 @@ export default {
           this.getUserInfo(user.uid);
         })
         .catch((err) => {
-          console.log(err);
+          (err);
         });
     },
 
@@ -78,7 +78,7 @@ export default {
             console.error("Error obteniendo información del usuario:", error);
           });
       } catch (err) {
-        console.log(err);
+        (err);
       }
     },
   },

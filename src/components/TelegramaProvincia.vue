@@ -287,12 +287,12 @@ export default {
 
                 if (votosNulosIngresados) {
                     // Agregar los votos nulos al objeto datosAgrupados
-                    datosAgrupados["VOTOS NULOS"] = { votos: this.votosNulos };
+                    // datosAgrupados["VOTOS NULOS"] = { votos: this.votosNulos };
                 }
 
                 if (votosBlancoIngresados) {
                     // Agregar los votos en blanco al objeto datosAgrupados
-                    datosAgrupados["VOTOS EN BLANCO"] = { votos: this.votosBlanco };
+                    // datosAgrupados["VOTOS EN BLANCO"] = { votos: this.votosBlanco };
                 }
 
                 // Verificar si se ingresaron votos en al menos uno de los puestos
