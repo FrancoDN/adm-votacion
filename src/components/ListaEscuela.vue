@@ -54,7 +54,7 @@ export default {
     nombreEscuela() {
       return this.nombreEscuelaPadre;
     },
-  },
+  }, 
 };
 </script>
 
