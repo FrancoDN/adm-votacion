@@ -132,7 +132,7 @@ export default {
         this.buttonT.color = "black";
       } else {
         this.type = "Telegrama";
-        this.inputText = "Ingrese el número de telegrama";
+        this.inputText = "Ingrese el número de mesa";
         this.uploadType = true;
         this.buttonQ.backgroundColor = "white";
         this.buttonQ.color = "black";
