@@ -3,5 +3,7 @@ module.exports = defineConfig({
   transpileDependencies: [
     'vuetify'
   ],
-  publicPath: 'adm-votacion'
+  publicPath: process.env.NODE_ENV === 'production'
+   ? '/adm-votacion/'
+   : '/'
 })

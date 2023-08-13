@@ -25,7 +25,7 @@ export default {
   },
   data() {
     return {
-      padron: 460,
+      padron: 81743,
       totalAvales: 0, 
     }
   },

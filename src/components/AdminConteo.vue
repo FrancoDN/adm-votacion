@@ -238,7 +238,7 @@ export default {
         maintainAspectRatio: false,
       },
       resultados: [],
-      padron: 43000,
+      padron: 81743,
     };
   },
 
@@ -390,7 +390,7 @@ export default {
 .chart-container {
   position: absolute;
   width: 100%;
-  height: 31vw;
+  height: 29vw;
   top: 35%;
   left: 50%;
   transform: translate(-50%, -50%);
