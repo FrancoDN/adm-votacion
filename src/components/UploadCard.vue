@@ -69,7 +69,7 @@ import "firebase/database";
 import ModalAval from "./ModalAvales.vue";
 export default {
   components: {
-    ModalAval
+    ModalAval,
   },
   data() {
     return {
@@ -193,7 +193,7 @@ export default {
                   }
                   setTimeout(() => {
                     this.showAlert = false;
-                    this.$router.push({ name: 'telegrama' });
+                    this.$router.push({ name: 'carga' });
 
                   }, 2000);
             }
