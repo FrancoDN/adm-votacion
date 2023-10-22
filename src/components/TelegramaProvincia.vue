@@ -18,14 +18,12 @@
                     <th>AGRUPACIONES POLITICAS</th>
                     <th>LISTAS INTERNAS</th>
                     <th>GOBERNADOR VICEGOBERNADOR</th>
-                    <th>LEGISLADORES PROVINCIALES</th>
                     <th>INTENDENTES, CONCEJALES Y CONSEJEROS ESCOLARES</th>
                 </tr>
                 <tr>
                     <td></td>
                     <td></td>
                     <td></td>
-                    <th class="partidos">Total de votos para la lista</th>
                     <th class="partidos">Total de votos para la lista</th>
                     <th class="partidos">Total de votos para la lista</th>
                 </tr>
@@ -42,14 +40,7 @@
                             {{ fila.gobernador }}
                         </template>
                     </td>
-                    <td :class="{ 'no-usar': fila.legisladoresProvinciales === 'NO USAR' }">
-                        <template v-if="!fila.legisladoresProvinciales">
-                            <input type="number" v-model="fila.votos.legisladoresProvinciales" />
-                        </template>
-                        <template v-else>
-                            {{ fila.legisladoresProvinciales }}
-                        </template>
-                    </td>
+                   
                     <td :class="{ 'no-usar': fila.intendente === 'NO USAR' }">
                         <template v-if="!fila.intendente">
                             <input type="number" v-model="fila.votos.intendente" />
@@ -63,31 +54,16 @@
                 <tr>
                     <th colspan="3" class="sumaFinal">TOTAL VOTOS AGRUPACIONES POLITICAS</th>
                     <td class="casillerosSuma total-votos">{{ totalVotosAgrupaciones.gobernador }}</td>
-                    <td class="casillerosSuma total-votos">{{ totalVotosAgrupaciones.legisladoresProvinciales }}</td>
                     <td class="casillerosSuma total-votos">{{ totalVotosAgrupaciones.intendente }}</td>
 
                 </tr>
-                <tr>
-                    <th colspan="3" class="sumaFinal">VOTOS NULOS</th>
-                    <td class="casillerosSuma">
-                        <input type="number" v-model="votosNulos.gobernador" />
-                    </td>
-                    <td class="casillerosSuma">
-                        <input type="number" v-model="votosNulos.legisladoresProvinciales" />
-                    </td>
-                    <td class="casillerosSuma">
-                        <input type="number" v-model="votosNulos.intendente" />
-                    </td>
-
-                </tr>
+              
                 <tr>
                     <th colspan="3" class="sumaFinal">VOTOS RECURRIDOS QUE SE REMITEN EN SOBRE Nro.3</th>
                     <td class="casillerosSuma">
                         <input type="number" v-model="votosRemitidos.gobernador" />
                     </td>
-                    <td class="casillerosSuma">
-                        <input type="number" v-model="votosRemitidos.legisladoresProvinciales" />
-                    </td>
+                   
                     <td class="casillerosSuma">
                         <input type="number" v-model="votosRemitidos.intendente" />
                     </td>
@@ -98,9 +74,7 @@
                     <td class="casillerosSuma">
                         <input type="number" v-model="votosImpugnados.gobernador" />
                     </td>
-                    <td class="casillerosSuma">
-                        <input type="number" v-model="votosImpugnados.legisladoresProvinciales" />
-                    </td>
+                    
                     <td class="casillerosSuma">
                         <input type="number" v-model="votosImpugnados.intendente" />
                     </td>
@@ -111,31 +85,16 @@
                     <td class="casillerosSuma">
                         <input type="number" v-model="votosBolsin.gobernador" />
                     </td>
-                    <td class="casillerosSuma">
-                        <input type="number" v-model="votosBolsin.legisladoresProvinciales" />
-                    </td>
+                   
                     <td class="casillerosSuma">
                         <input type="number" v-model="votosBolsin.intendente" />
                     </td>
 
                 </tr>
-                <tr>
-                    <th colspan="3" class="sumaFinal">VOTOS EN BLANCO</th>
-                    <td class="casillerosSuma">
-                        <input type="number" v-model="votosBlanco.gobernador" />
-                    </td>
-                    <td class="casillerosSuma">
-                        <input type="number" v-model="votosBlanco.legisladoresProvinciales" />
-                    </td>
-                    <td class="casillerosSuma">
-                        <input type="number" v-model="votosBlanco.intendente" />
-                    </td>
-
-                </tr>
+              
                 <tr>
                     <th colspan="3" class="sumaFinal">TOTAL POR COLUMNAS</th>
                     <td class="casillerosSuma">{{ totalFilasColumna('gobernador') }}</td>
-                    <td class="casillerosSuma">{{ totalFilasColumna('legisladoresProvinciales') }}</td>
                     <td class="casillerosSuma">{{ totalFilasColumna('intendente') }}</td>
 
                 </tr>
@@ -159,38 +118,32 @@ export default {
                 ...fila,
                 votos: {
                     gobernador: 0,
-                    legisladoresProvinciales: 0,
+
                     intendente: 0,
                 },
             })),
             votosNulos: {
                 gobernador: 0,
-                legisladoresProvinciales: 0,
                 intendente: 0,
             },
             votosRemitidos: {
                 gobernador: 0,
-                legisladoresProvinciales: 0,
                 intendente: 0,
             },
             votosImpugnados: {
                 gobernador: 0,
-                legisladoresProvinciales: 0,
                 intendente: 0,
             },
             votosBolsin: {
                 gobernador: 0,
-                legisladoresProvinciales: 0,
                 intendente: 0,
             },
             votosBlanco: {
                 gobernador: 0,
-                legisladoresProvinciales: 0,
                 intendente: 0,
             },
             totalesColumnas: {
                 gobernador: 0,
-                legisladoresProvinciales: 0,
                 intendente: 0,
             },
         };
@@ -204,7 +157,6 @@ export default {
             // Inicializar la suma de votos para cada columna en 0
             const total = {
                 gobernador: 0,
-                legisladoresProvinciales: 0,
                 intendente: 0,
             };
 
@@ -213,9 +165,7 @@ export default {
                 total.gobernador += fila.votos.gobernador
                     ? parseInt(fila.votos.gobernador)
                     : 0;
-                total.legisladoresProvinciales += fila.votos.legisladoresProvinciales
-                    ? parseInt(fila.votos.legisladoresProvinciales)
-                    : 0;
+               
                 total.intendente += fila.votos.intendente
                     ? parseInt(fila.votos.intendente)
                     : 0;
@@ -253,17 +203,14 @@ export default {
         limpiarVotosNulosYBlanco() {
             this.votosNulos = {
                 gobernador: 0,
-                legisladoresProvinciales: 0,
                 intendente: 0,
             };
             this.votosBlanco = {
                 gobernador: 0,
-                legisladoresProvinciales: 0,
                 intendente: 0,
             };
             this.totalesAgrupaciones = {
                 gobernador: 0,
-                legisladoresProvinciales: 0,
                 intendente: 0,
             };
         },
@@ -276,13 +223,11 @@ export default {
                 // Verificar si hay votos nulos ingresados en al menos una columna
                 const votosNulosIngresados =
                     this.votosNulos.gobernador ||
-                    this.votosNulos.legisladoresProvinciales ||
                     this.votosNulos.intendente;
 
                 // Verificar si hay votos en blanco ingresados en al menos una columna
                 const votosBlancoIngresados =
                     this.votosBlanco.gobernador ||
-                    this.votosBlanco.legisladoresProvinciales ||
                     this.votosBlanco.intendente;
 
                 if (votosNulosIngresados) {
@@ -298,7 +243,6 @@ export default {
                 // Verificar si se ingresaron votos en al menos uno de los puestos
                 const votosIngresados =
                     fila.votos.gobernador ||
-                    fila.votos.legisladoresProvinciales ||
                     fila.votos.intendente;
 
                 if (votosIngresados) {

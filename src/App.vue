@@ -10,9 +10,6 @@
       <button @click="estadistica">
         <p class="navBar" v-if="shouldShowEstadisticaButton">ESTADÍSTICAS</p>
       </button>
-      <button @click="quiniela">
-        <p class="navBar" v-if="shouldShowQuinielaButton">QUINIELA</p>
-      </button>
       <button @click="escuela">
         <p class="navBar" v-if="shouldShowEscuelaButton">ESCUELAS</p>
       </button>
