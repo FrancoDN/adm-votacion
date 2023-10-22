@@ -18,19 +18,12 @@
                     <th>AGRUPACIONES POLITICAS</th>
                     <th>LISTAS INTERNAS</th>
                     <th>PRESIDENTE VICEPRESIDENTE</th>
-                    <th>PARLAMENTOS DEL MERCOSUR NACIONAL (D.N)</th>
-                    <th>SENADORES NACIONALES</th>
-                    <th>DIPUTADOS NACIONALES</th>
-                    <th>PARLAMENTOS DEL MERCOSUR REGIONAL (D.R)</th>
+
                 </tr>
                 <tr>
                     <td></td>
                     <td></td>
                     <td></td>
-                    <th class="partidos">Total de votos para la lista</th>
-                    <th class="partidos">Total de votos para la lista</th>
-                    <th class="partidos">Total de votos para la lista</th>
-                    <th class="partidos">Total de votos para la lista</th>
                     <th class="partidos">Total de votos para la lista</th>
                 </tr>
                 <!-- Filas con los datos -->
@@ -46,144 +39,52 @@
                             {{ fila.presidente }}
                         </template>
                     </td>
-                    <td :class="{ 'no-usar': fila.parlamentoNacional === 'NO USAR' }">
-                        <template v-if="!fila.parlamentoNacional">
-                            <input type="number" v-model="fila.votos.parlamentoNacional" />
-                        </template>
-                        <template v-else>
-                            {{ fila.parlamentoNacional }}
-                        </template>
-                    </td>
-                    <td :class="{ 'no-usar': fila.senadoresNacionales === 'NO USAR' }">
-                        <template v-if="!fila.senadoresNacionales">
-                            <input type="number" v-model="fila.votos.senadoresNacionales" />
-                        </template>
-                        <template v-else>
-                            {{ fila.senadoresNacionales }}
-                        </template>
-                    </td>
-                    <td :class="{ 'no-usar': fila.diputadosNacionales === 'NO USAR' }">
-                        <template v-if="!fila.diputadosNacionales">
-                            <input type="number" v-model="fila.votos.diputadosNacionales" />
-                        </template>
-                        <template v-else>
-                            {{ fila.diputadosNacionales }}
-                        </template>
-                    </td>
-                    <td :class="{ 'no-usar': fila.parlamentoRegional === 'NO USAR' }">
-                        <template v-if="!fila.parlamentoRegional">
-                            <input type="number" v-model="fila.votos.parlamentoRegional" />
-                        </template>
-                        <template v-else>
-                            {{ fila.parlamentoRegional }}
-                        </template>
-                    </td>
+                    
                 </tr>
                 <tr>
                     <th colspan="3" class="sumaFinal">TOTAL VOTOS AGRUPACIONES POLITICAS</th>
                     <td class="casillerosSuma total-votos">{{ totalVotosAgrupaciones.presidente }}</td>
-                    <td class="casillerosSuma total-votos">{{ totalVotosAgrupaciones.parlamentoNacional }}</td>
-                    <td class="casillerosSuma total-votos">{{ totalVotosAgrupaciones.senadoresNacionales }}</td>
-                    <td class="casillerosSuma total-votos">{{ totalVotosAgrupaciones.diputadosNacionales }}</td>
-                    <td class="casillerosSuma total-votos">{{ totalVotosAgrupaciones.parlamentoRegional }}</td>
+                   
                 </tr>
                 <tr>
                     <th colspan="3" class="sumaFinal">VOTOS NULOS</th>
                     <td class="casillerosSuma">
                         <input type="number" v-model="votosNulos.presidente" />
                     </td>
-                    <td class="casillerosSuma">
-                        <input type="number" v-model="votosNulos.parlamentoNacional" />
-                    </td>
-                    <td class="casillerosSuma">
-                        <input type="number" v-model="votosNulos.senadoresNacionales" />
-                    </td>
-                    <td class="casillerosSuma">
-                        <input type="number" v-model="votosNulos.diputadosNacionales" />
-                    </td>
-                    <td class="casillerosSuma">
-                        <input type="number" v-model="votosNulos.parlamentoRegional" />
-                    </td>
+                   
                 </tr>
                 <tr>
                     <th colspan="3" class="sumaFinal">VOTOS RECURRIDOS QUE SE REMITEN EN SOBRE Nro.3</th>
                     <td class="casillerosSuma">
                         <input type="number" v-model="votosRemitidos.presidente" />
                     </td>
-                    <td class="casillerosSuma">
-                        <input type="number" v-model="votosRemitidos.parlamentoNacional" />
-                    </td>
-                    <td class="casillerosSuma">
-                        <input type="number" v-model="votosRemitidos.senadoresNacionales" />
-                    </td>
-                    <td class="casillerosSuma">
-                        <input type="number" v-model="votosRemitidos.diputadosNacionales" />
-                    </td>
-                    <td class="casillerosSuma">
-                        <input type="number" v-model="votosRemitidos.parlamentoRegional" />
-                    </td>
+                 
                 </tr>
                 <tr>
                     <th colspan="3" class="sumaFinal">VOTOS DE IDENTIDAD IMPUGNADA QUE SE REMITEN EN SOBRE Nro.3</th>
                     <td class="casillerosSuma">
                         <input type="number" v-model="votosImpugnados.presidente" />
                     </td>
-                    <td class="casillerosSuma">
-                        <input type="number" v-model="votosImpugnados.parlamentoNacional" />
-                    </td>
-                    <td class="casillerosSuma">
-                        <input type="number" v-model="votosImpugnados.senadoresNacionales" />
-                    </td>
-                    <td class="casillerosSuma">
-                        <input type="number" v-model="votosImpugnados.diputadosNacionales" />
-                    </td>
-                    <td class="casillerosSuma">
-                        <input type="number" v-model="votosImpugnados.parlamentoRegional" />
-                    </td>
+                    
                 </tr>
                 <tr>
                     <th colspan="3" class="sumaFinal">VOTOS DEL COMANDO ELECTORAL QUE SE REMITEN EN EL BOLSIN</th>
                     <td class="casillerosSuma">
                         <input type="number" v-model="votosBolsin.presidente" />
                     </td>
-                    <td class="casillerosSuma">
-                        <input type="number" v-model="votosBolsin.parlamentoNacional" />
-                    </td>
-                    <td class="casillerosSuma">
-                        <input type="number" v-model="votosBolsin.senadoresNacionales" />
-                    </td>
-                    <td class="casillerosSuma">
-                        <input type="number" v-model="votosBolsin.diputadosNacionales" />
-                    </td>
-                    <td class="casillerosSuma">
-                        <input type="number" v-model="votosBolsin.parlamentoRegional" />
-                    </td>
+                   
                 </tr>
                 <tr>
                     <th colspan="3" class="sumaFinal">VOTOS EN BLANCO</th>
                     <td class="casillerosSuma">
                         <input type="number" v-model="votosBlanco.presidente" />
                     </td>
-                    <td class="casillerosSuma">
-                        <input type="number" v-model="votosBlanco.parlamentoNacional" />
-                    </td>
-                    <td class="casillerosSuma">
-                        <input type="number" v-model="votosBlanco.senadoresNacionales" />
-                    </td>
-                    <td class="casillerosSuma">
-                        <input type="number" v-model="votosBlanco.diputadosNacionales" />
-                    </td>
-                    <td class="casillerosSuma">
-                        <input type="number" v-model="votosBlanco.parlamentoRegional" />
-                    </td>
+                    
                 </tr>
                 <tr>
                     <th colspan="3" class="sumaFinal">TOTAL POR COLUMNAS</th>
                     <td class="casillerosSuma">{{ totalFilasColumna('presidente') }}</td>
-                    <td class="casillerosSuma">{{ totalFilasColumna('parlamentoNacional') }}</td>
-                    <td class="casillerosSuma">{{ totalFilasColumna('senadoresNacionales') }}</td>
-                    <td class="casillerosSuma">{{ totalFilasColumna('diputadosNacionales') }}</td>
-                    <td class="casillerosSuma">{{ totalFilasColumna('parlamentoRegional') }}</td>
+                   
                 </tr>
             </tbody>
         </table>
@@ -205,53 +106,25 @@ export default {
                 ...fila,
                 votos: {
                     presidente: "",
-                    parlamentoNacional: "",
-                    senadoresNacionales: "",
-                    diputadosNacionales: "",
-                    parlamentoRegional: "",
                 },
             })),
             votosNulos: {
                 presidente: 0,
-                parlamentoNacional: 0,
-                senadoresNacionales: 0,
-                diputadosNacionales: 0,
-                parlamentoRegional: 0,
             },
             votosRemitidos: {
                 presidente: 0,
-                parlamentoNacional: 0,
-                senadoresNacionales: 0,
-                diputadosNacionales: 0,
-                parlamentoRegional: 0,
             },
             votosImpugnados: {
                 presidente: 0,
-                parlamentoNacional: 0,
-                senadoresNacionales: 0,
-                diputadosNacionales: 0,
-                parlamentoRegional: 0,
             },
             votosBolsin: {
                 presidente: 0,
-                parlamentoNacional: 0,
-                senadoresNacionales: 0,
-                diputadosNacionales: 0,
-                parlamentoRegional: 0,
             },
             votosBlanco: {
                 presidente: 0,
-                parlamentoNacional: 0,
-                senadoresNacionales: 0,
-                diputadosNacionales: 0,
-                parlamentoRegional: 0,
             },
             totalesColumnas: {
                 presidente: 0,
-                parlamentoNacional: 0,
-                senadoresNacionales: 0,
-                diputadosNacionales: 0,
-                parlamentoRegional: 0,
             },
         };
     },
@@ -260,28 +133,12 @@ export default {
             // Inicializar la suma de votos para cada columna en 0
             const total = {
                 presidente: 0,
-                parlamentoNacional: 0,
-                senadoresNacionales: 0,
-                diputadosNacionales: 0,
-                parlamentoRegional: 0,
             };
 
             // Recorrer las filas y sumar los votos de cada columna
             for (const fila of this.filas) {
                 total.presidente += fila.votos.presidente
                     ? parseInt(fila.votos.presidente)
-                    : 0;
-                total.parlamentoNacional += fila.votos.parlamentoNacional
-                    ? parseInt(fila.votos.parlamentoNacional)
-                    : 0;
-                total.senadoresNacionales += fila.votos.senadoresNacionales
-                    ? parseInt(fila.votos.senadoresNacionales)
-                    : 0;
-                total.diputadosNacionales += fila.votos.diputadosNacionales
-                    ? parseInt(fila.votos.diputadosNacionales)
-                    : 0;
-                total.parlamentoRegional += fila.votos.parlamentoRegional
-                    ? parseInt(fila.votos.parlamentoRegional)
                     : 0;
             }
 
@@ -319,24 +176,12 @@ export default {
         limpiarVotosNulosYBlanco() {
             this.votosNulos = {
                 presidente: 0,
-                parlamentoNacional: 0,
-                senadoresNacionales: 0,
-                diputadosNacionales: 0,
-                parlamentoRegional: 0,
             };
             this.votosBlanco = {
                 presidente: 0,
-                parlamentoNacional: 0,
-                senadoresNacionales: 0,
-                diputadosNacionales: 0,
-                parlamentoRegional: 0,
             };
             this.totalesAgrupaciones = {
                 presidente: 0,
-                parlamentoNacional: 0,
-                senadoresNacionales: 0,
-                diputadosNacionales: 0,
-                parlamentoRegional: 0,
             };
         },
         submitData() {
@@ -347,19 +192,11 @@ export default {
             for (const fila of this.filas) {
                 // Verificar si hay votos nulos ingresados en al menos una columna
                 const votosNulosIngresados =
-                    this.votosNulos.presidente ||
-                    this.votosNulos.parlamentoNacional ||
-                    this.votosNulos.senadoresNacionales ||
-                    this.votosNulos.diputadosNacionales ||
-                    this.votosNulos.parlamentoRegional;
+                    this.votosNulos.presidente
 
                 // Verificar si hay votos en blanco ingresados en al menos una columna
                 const votosBlancoIngresados =
-                    this.votosBlanco.presidente ||
-                    this.votosBlanco.parlamentoNacional ||
-                    this.votosBlanco.senadoresNacionales ||
-                    this.votosBlanco.diputadosNacionales ||
-                    this.votosBlanco.parlamentoRegional;
+                    this.votosBlanco.presidente
 
                 if (votosNulosIngresados) {
                     // Agregar los votos nulos al objeto datosAgrupadosNacion
@@ -373,12 +210,7 @@ export default {
 
                 // Verificar si se ingresaron votos en al menos uno de los puestos
                 const votosIngresados =
-                    fila.votos.presidente ||
-                    fila.votos.parlamentoNacional ||
-                    fila.votos.senadoresNacionales ||
-                    fila.votos.diputadosNacionales ||
-                    fila.votos.parlamentoRegional;
-
+                    fila.votos.presidente
                 if (votosIngresados) {
                     // Crear un nuevo objeto con los datos de la fila
                     const datosFila = {
