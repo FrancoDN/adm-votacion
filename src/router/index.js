@@ -7,6 +7,8 @@ import QuinielaView from '../views/QuinielaView.vue'
 import TelegramaView from '../views/TelegramaView.vue'
 import EscuelasView from '../views/EscuelasView.vue'
 import IntendentesView from '../views/IntendentesView.vue'
+import CargaView from '../views/CargaView.vue'
+import MesasView from '../views/MesasView.vue'
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
@@ -68,6 +70,24 @@ const routes = [
     path: '/telegrama',
     name: 'telegrama',
     component: TelegramaView,
+    meta: {
+      requiresAuth: true,
+      hideNavbar: true,
+    }
+  },
+  {
+    path: '/carga',
+    name: 'carga',
+    component: CargaView,
+    meta: {
+      requiresAuth: true,
+      hideNavbar: true,
+    }
+  },
+  {
+    path: '/mesas',
+    name: 'mesas',
+    component: MesasView,
     meta: {
       requiresAuth: true,
       hideNavbar: true,
